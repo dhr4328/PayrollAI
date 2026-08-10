@@ -813,7 +813,13 @@ def _is_real_api_key(key: Optional[str]) -> bool:
 
 
 def get_nvidia_client() -> Optional[OpenAI]:
-    api_key = os.getenv("NVIDIA_API_KEY") or os.getenv("OPENAI_API_KEY") or os.getenv("API_KEY")
+    api_key = (
+        os.getenv("NVIDIA_API_KEY")
+        or os.getenv("OPENAI_API_KEY")
+        or os.getenv("GEMINI_API_KEY")
+        or os.getenv("AI_API_KEY")
+        or os.getenv("API_KEY")
+    )
     if not _is_real_api_key(api_key):
         return None
     base_url = os.getenv("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1")
