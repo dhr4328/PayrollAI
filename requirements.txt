@@ -7,22 +7,12 @@ python-multipart==0.0.20
 
 # Database
 sqlalchemy==2.0.36
-alembic==1.14.0
-psycopg2-binary==2.9.10
-asyncpg==0.30.0
 
 # AI / LLM
-# NVIDIA Nemotron is accessed via the OpenAI-compatible SDK (openai package below)
 openai==1.57.4
-langchain==0.3.9
-
-# Vector / RAG
-pgvector==0.3.6
-sentence-transformers==3.3.1
 
 # Document Processing
 pymupdf==1.25.3
-pdfplumber==0.11.4
 openpyxl==3.1.5
 python-docx==1.1.2
 
@@ -44,12 +34,3 @@ fastapi-mail==1.4.2
 
 # PDF Generation
 reportlab==4.2.5
-weasyprint==63.0
-
-# CORS + Security
-python-multipart==0.0.20
-
-# Dev
-pytest==8.3.4
-pytest-asyncio==0.24.0
-black==24.10.0
