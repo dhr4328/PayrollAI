@@ -1,38 +1,73 @@
-# Payroll AI — AI-First Payroll & HR Management Platform
+# Payroll AI
+### ⚡ AI-Powered Payroll & HR Management Platform
 
 [![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Next.js](https://img.shields.io/badge/Next.js-14+-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2+-000000?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0+-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0+-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat-square&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
 ---
 
-## 📌 Project Overview
+## 🎬 [Demo Screenshot / GIF]
 
-**Payroll AI** is an intelligent, full-stack Payroll and HR Management platform designed to streamline salary processing, attendance logging, statutory tax compliance (PF, ESI, Professional Tax), spreadsheet imports, and official document generation (PDF Payslips & Form XXII Register of Advances).
+![Payroll AI Dashboard Demo](https://raw.githubusercontent.com/dhr4328/PayrollAI/main/assets/demo-preview.gif)
 
-Powered by a **Hybrid AI Engine** (Tier 1 Smart Rule Engine + Tier 2 NVIDIA Nemotron LLM), Payroll AI enables HR managers to query employee data, execute record updates, generate inline payslips, and trigger organization-wide adjustments directly using conversational natural language commands.
-
-### ✨ Key Highlights
-- **Two-Partition Login Portal**: Split-screen design featuring brand showcase on the left and credentials login with a **⚡ 1-Click HR Admin Quick Access** button on the right.
-- **Hybrid AI Chat Assistant**: Smart rule engine paired with NVIDIA Nemotron LLM capability for tool dispatching.
-- **Whole-Company Scope Default**: Chat updates without specific employee codes apply company-wide to all active records.
-- **Smart Excel/CSV Column Mapper**: Uses fuzzy string sequence matching (`difflib`) to map arbitrary spreadsheet headers to database schema fields automatically.
-- **ReportLab PDF Generator**: Renders pixel-perfect, publication-ready individual payslips and official **Form XXII Register of Advances** landscape A4 PDFs.
-- **Bulk Exports**: One-click ZIP generation for all employee payslip PDFs.
-- **Dynamic Statutory Engine**: Instant calculations for Employee/Employer PF (12%/13%), ESI (0.75%/3.25%), Professional Tax (PT), and Overtime (OT).
+> **Live Workspace Preview**: Experience real-time conversational payroll management, automatic statutory tax calculations, fuzzy-mapped spreadsheet imports, and instant PDF payslip downloads.
 
 ---
 
-## 🏗️ Architecture & Technology Stack
+## 📌 Overview
+
+**Payroll AI** is an enterprise-grade, AI-first Payroll & HR Management Platform engineered to simplify and automate end-to-end salary processing, attendance logging, statutory tax compliance (PF, ESI, Professional Tax), spreadsheet imports, and legal document generation.
+
+By combining a high-performance **FastAPI** backend with a modern **Next.js 16 (React 19)** web interface and a **Dual-Tier Hybrid AI Engine** (Tier 1 Smart Rule Engine + Tier 2 NVIDIA Nemotron LLM Function Calling), Payroll AI enables HR professionals and business owners to manage enterprise payroll using simple, natural language commands.
+
+Whether updating per-day wages across an entire organization, querying individual employee payslips, calculating statutory deductions, or generating official government compliance reports like **Form XXII Register of Advances**, Payroll AI delivers speed, accuracy, and ease of use.
+
+---
+
+## 💡 Why I Built It
+
+Traditional payroll management software in SMEs and modern enterprises remains fragmented, manual, and prone to costly human errors:
+
+1. **Excel Dependency & Mismatched Columns**: HR managers constantly battle raw spreadsheets with non-standard column headers (`Emp_ID`, `Staff Code`, `Per Day Rate`, `Daily Wages`), leading to hours of tedious reformatting.
+2. **Complex Statutory Compliance Rules**: Manual computation of Provident Fund (PF capped at ₹15,000), Employee State Insurance (ESI brackets up to ₹21,000 gross), and state-specific Professional Tax (PT) often leads to filing errors and compliance penalties.
+3. **Rigid Software Interfaces**: Most legacy HR tools require navigating through 10+ nested form pages just to execute bulk wage updates or verify attendance logs.
+4. **Time-Consuming Document Generation**: Creating individual monthly payslips and official register documents (such as Form XXII) requires manual mail merges or external PDF software.
+
+**Payroll AI** was created to bridge this gap by bringing **conversational AI co-pilots** to human resources. HR teams can interact with their database in plain English (*"Update per day rate to 600"*, *"Show overtime report for Assembly department"*, *"Generate Form XXII Advances Register"*), while maintaining strict mathematical precision, regulatory compliance, and instant PDF outputs.
+
+---
+
+## ✨ Key Features
+
+- **🔐 Split-Screen Login Portal**: Features a two-partition design with company brand showcase on the left and a credentials form with a **⚡ 1-Click HR Admin Quick Access** button on the right.
+- **🤖 Dual-Tier Hybrid AI Assistant**:
+  - **Tier 1 (Smart Rule Engine)**: Sub-millisecond deterministic intent recognition for formula evaluation, instant wage updates, attendance reports, and statutory queries.
+  - **Tier 2 (NVIDIA Nemotron LLM)**: Multi-turn function-calling LLM capable of complex query reasoning and dynamic database tool dispatching.
+- **🌐 Whole-Company Default Principle**: Intelligent command scoping where updates without a specific employee ID automatically apply company-wide and trigger org-wide payroll recalculations.
+- **🗺️ Smart Column Mapper**: Integrated fuzzy string matching (`difflib`) that automatically maps arbitrary uploaded spreadsheet headers to canonical database fields with confidence scoring.
+- **📊 Dynamic Statutory Tax Engine**: Real-time calculations for:
+  - **Provident Fund (PF)**: Employee (12%) & Employer (13%) capped at ₹15,000 basic wage.
+  - **Employee State Insurance (ESI)**: Employee (0.75%) & Employer (3.25%) for gross earnings ≤ ₹21,000.
+  - **Professional Tax (PT)**: Automatic slab deduction (₹200 for gross > ₹12,000).
+  - **Overtime Pay**: Precise hourly overtime calculation based on per-day wage rates.
+- **📄 ReportLab PDF Engine**: Renders pixel-perfect, publication-ready individual PDF payslips and official **Form XXII Register of Advances** (Landscape A4 format).
+- **📦 Bulk ZIP Export**: One-click archive generation compiling all employee payslip PDFs into a single downloadable ZIP file.
+- **📈 Interactive Analytics Dashboards**: Visual breakdown of total payroll expenditure, gross vs. net pay distribution, department summaries, attendance counts, and absent lists using Recharts.
+
+---
+
+## 🏗️ System Architecture
 
 ```
                                ┌────────────────────────────────────────┐
-                               │       Next.js / React Frontend         │
-                               │  (Port 3000 / Login & App Router)      │
+                               │       Next.js 16 / React 19 UI         │
+                               │  (Port 3000 / App Router & Tailwind)   │
                                └──────────────────┬─────────────────────┘
                                                   │ REST APIs & Streams
                                                   ▼
@@ -42,285 +77,123 @@ Powered by a **Hybrid AI Engine** (Tier 1 Smart Rule Engine + Tier 2 NVIDIA Nemo
                                └──────┬──────────────────────┬──────────┘
                                       │                      │
                    ┌──────────────────┴─────────┐  ┌─────────┴───────────────────┐
-                   │    Hybrid AI Chat Engine   │  │   Smart Column Mapper     │
+                   │    Hybrid AI Engine        │  │   Smart Column Mapper     │
                    │ (Tier 1 Rule + Tier 2 LLM) │  │  (Fuzzy Header Matching)  │
                    └──────────────────┬─────────┘  └─────────┬───────────────────┘
                                       │                      │
                                       ▼                      ▼
                                ┌────────────────────────────────────────┐
-                               │         SQLite Database & PDFs         │
-                               │ (payroll.db & ReportLab Engine)        │
+                               │         SQLite DB & ReportLab PDF      │
+                               │ (payroll.db & Form XXII PDF Engine)    │
                                └────────────────────────────────────────┘
 ```
 
-### Stack Breakdown
-- **Backend Framework**: Python 3.9+, [FastAPI](https://fastapi.tiangolo.com/), Uvicorn (ASGI server), Pydantic.
-- **Database Layer**: SQLite 3 with raw SQL queries and custom trigger-based payroll recalculations.
-- **Data & File Processing**: Pandas, OpenPyXL, ReportLab (PDF canvas & Platypus engine), ZipFile, Python-dotenv.
-- **AI Integrations**: OpenAI-compatible Python SDK connected to NVIDIA Nemotron / API endpoints.
-- **Frontend Framework**: Next.js (App Router), React 19, TypeScript, Tailwind CSS, Lucide Icons, React Markdown.
+---
+
+## 🛠️ Tech Stack
+
+### **Frontend**
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **UI Library**: [React 19](https://react.dev/)
+- **Language**: [TypeScript 5](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/), `clsx`, `tailwind-merge`
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Charts & Data**: [Recharts](https://recharts.org/)
+- **Markdown Rendering**: `react-markdown`, `remark-gfm`
+
+### **Backend**
+- **Framework**: [FastAPI](https://fastapi.tiangolo.com/) (Python 3.9+)
+- **ASGI Server**: [Uvicorn](https://www.uvicorn.org/)
+- **Validation**: [Pydantic v2](https://docs.pydantic.dev/)
+- **Database**: [SQLite 3](https://www.sqlite.org/) with custom trigger-based payroll recalculations
+- **Spreadsheet & Data**: Pandas, NumPy, OpenPyXL
+
+### **AI & NLP**
+- **LLM Provider**: NVIDIA Nemotron-4 340B Instruct (via `openai` Python SDK)
+- **Fuzzy Matching**: Python `difflib.SequenceMatcher`
+
+### **PDF & Document Engine**
+- **PDF Canvas**: [ReportLab](https://www.reportlab.com/) (Platypus Flowables, Paragraphs, Tables)
+- **Compression**: Python `zipfile` module for bulk exports
 
 ---
 
-## 📂 Project Directory Structure
+## 🧠 AI Architecture
+
+The platform employs a two-tier hybrid execution pipeline designed for zero latency on standard commands and maximum intelligence for complex requests:
 
 ```
-Rag Payroll/
-├── backend/
-│   ├── main.py                     # FastAPI application entry point & router registration
-│   ├── database.py                 # SQLite schema, data loaders, queries, and bulk recalculation logic
-│   ├── smart_column_mapper.py      # Fuzzy matching column mapper for Excel/CSV spreadsheet uploads
-│   ├── requirements.txt            # Python dependencies
-│   ├── .env                        # Environment configuration (NVIDIA API Key, base URLs)
-│   ├── payroll.db                  # SQLite database file (created dynamically)
-│   ├── routers/
-│   │   ├── ai_chat.py              # AI Chat endpoint (Tier 1 Smart Engine + Tier 2 LLM + Tool Dispatch)
-│   │   ├── employees.py           # Employee master records REST API & master excel file upload
-│   │   ├── payroll.py             # Payroll metrics, department breakdowns & salary summary APIs
-│   │   ├── attendance.py          # Attendance and absent employee reporting APIs
-│   │   ├── leaves.py              # Leave management API stub
-│   │   ├── payslip_pdf.py         # ReportLab PDF payslip, Form XXII Advances PDF & Bulk ZIP export
-│   │   └── upload.py              # Excel/CSV upload preview, column mapping confirmation & direct import
-│   └── uploads/                   # Upload storage for master spreadsheets and metadata
-├── payroll-ai/
-│   ├── src/
-│   │   ├── app/                    # Next.js App Router pages
-│   │   │   ├── login/              # Two-Partition Login Page (Brand Showcase + HR Quick Access)
-│   │   │   ├── dashboard/          # Main AI Assistant workspace
-│   │   │   ├── employees/          # Employee directory & table view
-│   │   │   ├── payroll/            # Monthly payroll summary
-│   │   │   ├── payslips/           # Payslip viewer & PDF download center
-│   │   │   ├── reports/            # Compliance reports & Form XXII generator
-│   │   │   └── settings/           # Company settings & register defaults
-│   │   ├── components/
-│   │   │   ├── ai/                 # AIChatWorkspace, AIMessageBubble, AIPanel UI components
-│   │   │   ├── employees/          # Employee directory & table components
-│   │   │   └── layout/             # AppShell, Header, Sidebar components
-│   │   ├── lib/                    # API client utilities, formatting helpers, AI type definitions
-│   │   └── types/                  # TypeScript interface definitions for Employees and Payroll
-│   ├── package.json                # Frontend package configuration and scripts
-│   └── tsconfig.json               # TypeScript compiler configuration
-└── README.md                       # Comprehensive project documentation
+                            User Sends Chat Command
+                                       │
+                         ┌─────────────┴─────────────┐
+                         ▼                           ▼
+                 Pattern Matched?             Unstructured Query?
+                         │                           │
+                         ▼                           ▼
+             ┌───────────────────────┐   ┌───────────────────────┐
+             │ Tier 1: Rule Engine   │   │ Tier 2: Nemotron LLM  │
+             │ (Instant Execution)   │   │ (Tool Function Calls) │
+             └───────────┬───────────┘   └───────────┬───────────┘
+                         │                           │
+                         └─────────────┬─────────────┘
+                                       ▼
+                       SQL Recalculation & Execution
 ```
 
----
+### **1. Tier 1: Smart Rule Engine**
+- Executes in under **5ms** without API token costs.
+- Recognizes direct regex patterns for intent detection (e.g., wage updates, attendance queries, statutory rules, PDF triggers).
+- Directly handles single-employee modifications (`update rate for NUC0820 to 550`) and organization-wide modifications (`update per day rate to 600`).
 
-## 📖 Detailed Module & Function Reference
+### **2. Tier 2: NVIDIA Nemotron LLM (Tool Calling)**
+- Triggered when Tier 1 confidence is low or complex conversational reasoning is required.
+- Equipped with function-calling tools (`get_employee`, `get_payroll_summary`, `update_all_employees_records`, `get_overtime_report`, etc.).
+- Multi-turn tool execution loop runs up to 8 iterations to fetch data, execute updates, and assemble answers.
 
-This section provides an exhaustive guide to every file and function across the backend and frontend modules.
-
-### 1. `backend/database.py` (Database & Calculation Engine)
-
-Manages SQLite table schema, excel loading, data filtering, record updates, and payroll recalculations.
-
-- **`get_db_connection()`**:
-  Creates and returns a `sqlite3.Connection` instance connected to `payroll.db` with `sqlite3.Row` factory enabled for dictionary-like column access.
-- **`init_db()`**:
-  Executes DDL commands to create the `employees` and `payroll_records` tables if they do not exist. Establishes primary keys and foreign key constraints.
-- **`clean_float(val)`**:
-  Sanitizes input values (handling `None`, `""`, `"-"`) and safely converts them to `float`. Returns `0.0` on failure.
-- **`clean_str(val)`**:
-  Strips whitespace from string inputs and converts `None` or `"-"` to an empty string.
-- **`clean_date(val)`**:
-  Parses `datetime` objects or date strings into standardized `YYYY-MM-DD` format.
-- **`load_data_from_excel(excel_path)`**:
-  Reads an Excel file using OpenPyXL, clears existing records, parses data starting from row 5, populates `employees` and `payroll_records` tables, and commits the transaction. Returns total record count.
-- **`load_data_from_dataframe(df)`**:
-  Clears existing tables and populates the database using a sanitized Pandas DataFrame produced during file upload or auto-mapping.
-- **`get_all_employees(department=None, category=None)`**:
-  Retrieves combined employee master and payroll records, with optional case-insensitive SQL filtering by department or category.
-- **`get_employee(emp_code)`**:
-  Fetches the complete profile and payroll breakdown for a single employee specified by `emp_code`.
-- **`get_attendance_summary()`**:
-  Returns counts for active present employees (`present > 0`), absent employees (`absent > 0`), and overtime employees (`extra_duty_hrs > 0`).
-- **`get_absent_employees()`**:
-  Queries and returns a list of employees with recorded absence days.
-- **`get_overtime_report(department=None)`**:
-  Queries employees with recorded overtime extra duty hours, returning name, employee code, department, extra hours, and overtime pay.
-- **`get_payroll_summary()`**:
-  Aggregates organization-wide metrics: total employee count, total gross earnings, total net pay, total deductions, total EE PF, and total ESI.
-- **`get_department_summary()`**:
-  Groups payroll metrics by department, returning department name, employee count, and aggregate net pay.
-- **`get_record_count()`**:
-  Returns the total count of active employee records in the database.
-- **`update_employee_record(emp_code: str, updates: dict) -> bool`**:
-  Dynamically updates specific master fields (`per_day_rate`, `department`, `contractor`, etc.) or payroll fields (`present`, `other_deduction`, `extra_duty_hrs`, etc.) for a single employee, then triggers `recalculate_employee_payroll(emp_code)`.
-- **`update_all_employees_records(updates: dict) -> int`**:
-  Executes bulk updates for specified fields across **ALL employees** in the database and recalculates payroll for every employee organization-wide. Returns total updated count.
-- **`recalculate_employee_payroll(emp_code: str)`**:
-  Re-computes basic salary, overtime pay (`extra_pay = per_day_rate / 8 * extra_duty_hrs`), total earnings, statutory PF (12% EE / 13% ER capped at ₹15,000 basic), ESI (0.75% EE / 3.25% ER for earnings ≤ ₹21,000), Professional Tax (₹200 if payable > ₹12,000), total deductions, and net pay. Updates `payroll_records` table.
+### **3. Whole-Company Default Principle**
+When a user issues an update command without specifying an employee ID (e.g., *"Update per day rate to 600"* or *"Update advance to 1000"*), the AI assistant interprets this as an **organization-wide adjustment**. It updates all active records in `payroll.db` and automatically triggers `recalculate_employee_payroll()` for every employee.
 
 ---
 
-### 2. `backend/smart_column_mapper.py` (Intelligent File Column Mapper)
+## 🖼️ Screenshots
 
-Auto-detects and fuzzy-matches uploaded Excel/CSV column headers against canonical database field names.
-
-- **`_normalise(s: str) -> str`**:
-  Normalizes column headers by converting to lowercase, stripping whitespace, and stripping punctuation (`_`, `.`, `/`).
-- **`_best_match(header: str, all_aliases: dict) -> tuple[Optional[str], float]`**:
-  Compares a normalized column header against canonical aliases using `difflib.SequenceMatcher`. Automatically ignores serial number / index headers (e.g. `Sr. No`, `S.No`, `Index`). Returns `(mapped_field_name, confidence_score)`.
-- **`detect_columns(headers: list[str]) -> list[dict]`**:
-  Processes a list of raw column headers, resolves header claims using greedy highest-score sorting to prevent duplicate assignments, assigns confidence levels (`HIGH` ≥ 0.88, `MEDIUM` ≥ 0.65, `LOW` ≥ 0.45, `NONE` < 0.45), and provides top alternative field suggestions.
-- **`mapping_to_rename_dict(mapping: list[dict]) -> dict[str, str]`**:
-  Converts confirmed mapping results into a `{ "Source Column": "canonical_field" }` dictionary for Pandas DataFrame column renaming.
+| View | Description |
+|---|---|
+| **🔐 Two-Partition Login** | Split screen with brand showcase on left & 1-click HR Admin quick access on right |
+| **💬 AI Assistant Workspace** | Conversational chat panel with live stream responses & action cards |
+| **👥 Employee Directory** | Filterable table showing master records, departments, and category breakdowns |
+| **📊 Payroll Metrics** | Org-wide salary totals, net pay distributions, and department breakdowns |
+| **📑 Payslip Generator** | Individual payslip viewer with inline PDF preview and download buttons |
+| **📋 Form XXII Register** | Statutory Register of Advances report generator with A4 landscape exports |
 
 ---
 
-### 3. `backend/routers/ai_chat.py` (AI Assistant & Router)
-
-Implements the hybrid Tier 1 (Rule Engine) and Tier 2 (LLM Function Calling) AI chat assistant.
-
-- **`_dispatch_tool(name: str, arguments: dict) -> str`**:
-  Executes tool calls requested by the LLM (`get_employee`, `get_all_employees`, `get_attendance_summary`, `get_absent_employees`, `get_overtime_report`, `get_payroll_summary`, `get_department_summary`, `update_all_employees_records`, `get_statutory_rules`, `generate_payslip_pdf_link`) and returns JSON strings.
-- **`_fmt(val) -> str`**:
-  Formats numbers into Indian Rupee currency strings (`₹1,234.56`).
-- **`_num(val) -> float`**:
-  Safely converts inputs to floats.
-- **`_find_employee_by_name(name_query: str)`**:
-  Searches active employees by partial first name, last name, or full name match.
-- **`_build_payslip_response(emp: dict) -> str`**:
-  Renders a full Markdown formatted inline payslip breakdown (Employee Details, Attendance, Earnings, Deductions, Net Pay, Download Links).
-- **`_rule_based_response(message: str) -> Optional[str]`**:
-  Tier 1 conversational & action parser:
-  - Detects single-employee commands (`update rate for NUC0820 to 550`, `update advance for NUC0854 to 2500`).
-  - **Whole-Company Default Rule**: If no employee code or name is present, evaluates commands for the **whole company** (`update per day rate to 600`, `update advance to 1000`, `update present days to 25`, `update setting in chat box`).
-  - Handles greetings, gratitude, farewells, identity queries, statutory rules, attendance reports, overtime summaries, advances registers, and bulk payslip downloads.
-- **`get_nvidia_client() -> Optional[OpenAI]`**:
-  Loads environment variables from `backend/.env` and instantiates an OpenAI client pointing to NVIDIA Nemotron endpoints if a valid API key is present.
-- **`get_model_name() -> str`**:
-  Returns configured LLM model name from `NVIDIA_MODEL` environment variable.
-- **`_nvidia_chat(client: OpenAI, message: str) -> str`**:
-  Executes Tier 2 multi-turn LLM chat loop with tool calling capability up to 8 iterations.
-- **`chat_endpoint(request: ChatRequest)`**:
-  POST `/api/ai/chat` endpoint handler. Tries Tier 1 rule-based engine first; if unhandled, routes to Tier 2 LLM; falls back to helpful guided defaults. Returns responses as a text/plain `StreamingResponse`.
-
----
-
-### 4. `backend/routers/payslip_pdf.py` (PDF & Document Generator)
-
-Uses ReportLab to generate publication-quality PDF payslips and official compliance registers.
-
-- **`COMPANY`**:
-  Standardized company constant (`name`: `"Payroll AI"`).
-- **`generate_payslip_pdf(emp: dict, company: dict = None) -> bytes`**:
-  Constructs a single-page A4 PDF payslip containing company headers, employee details, attendance metrics, earnings table, deductions table, net pay banner, and signature blocks.
-- **`generate_advances_register_pdf(employees_with_advances: list, pay_month: str, contractor: str, work_location: str, principal_employer: str) -> bytes`**:
-  Generates official **Form XXII — Register of Advances** in landscape A4 format following statutory labour compliance guidelines. Includes contractor headers, multi-column tables, total summary footers, and signature blocks.
-- **`get_single_payslip_pdf(emp_code: str)`**:
-  GET `/api/payslip/pdf/{emp_code}` endpoint returning raw PDF bytes with `inline` or `attachment` disposition.
-- **`get_bulk_payslips_zip()`**:
-  GET `/api/payslip/bulk-zip` endpoint that compiles PDF payslips for all active employees into an in-memory ZIP archive and streams it for bulk download.
-- **`download_advances_register(...)`**:
-  GET `/api/payslip/advances-register` endpoint generating and returning the official Form XXII Register of Advances PDF.
-
----
-
-### 5. `payroll-ai/src/app/login/page.tsx` (Two-Partition Login Portal)
-
-Next.js frontend login route providing a modern split-screen layout.
-
-- **Left Partition**: Styled with dark indigo slate gradient (`linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e293b 100%)`) matching app header cards. Showcases **Payroll AI** branding, platform summary, feature grid, and active enterprise node status.
-- **Right Partition**: Styled with slate theme (`#f8fafc`). Features email/password credentials form and a **⚡ 1-Click HR Admin Quick Access** button (`admin@payrollai.com`) for immediate single-click access.
-
----
-
-### 6. `backend/routers/upload.py`, `employees.py`, `payroll.py`, `attendance.py`, `leaves.py` & `main.py`
-
-- **`_read_file_to_df()`**: Reads uploaded CSV/Excel files into a Pandas DataFrame with auto-detected header rows.
-- **`upload_direct_import()`**: POST `/api/upload/direct-import` for inline file uploads in chat.
-- **`read_all_employees()`**: GET `/api/employees/` returning all employee master & payroll records.
-- **`upload_master_file()`**: POST `/api/employees/upload-master` uploading master spreadsheet.
-- **`get_payroll_summary()`**: GET `/api/payroll/summary` returning organization-wide payroll summary.
-- **`get_department_summary()`**: GET `/api/payroll/department-summary` returning department breakdown.
-- **`get_attendance_summary()`**: GET `/api/attendance/summary` returning attendance metrics.
-- **`get_absent_employees()`**: GET `/api/attendance/absent` returning absent list.
-- **`get_overtime_report()`**: GET `/api/attendance/overtime` returning overtime report.
-- **`lifespan(app: FastAPI)`**: Startup handler initializing SQLite DB schema and auto-loading custom master spreadsheet if present in `uploads/`.
-
----
-
-## 🤖 AI Assistant Capabilities & Whole-Company Default Principle
-
-The AI Assistant follows strict rules when interpreting user instructions:
-
-```
-                          User Sends Chat Command
-                                     │
-                 ┌───────────────────┴───────────────────┐
-                 ▼                                       ▼
-    Mentions Employee Code/Name             No Employee Mentioned
-    (e.g., "NUC0820", "John")            (e.g., "Update rate to 600",
-                 │                        "Update setting in chat")
-                 ▼                                       ▼
-     Single Employee Scope                    Whole-Company Scope
-  (Modify only target record)              (Apply to ALL DB records)
-```
-
-1. **Per-Employee Operations**: Commands specifying employee codes (`NUC0820`) modify or view **only that individual record**.
-2. **Whole-Company Default Operations**: Commands without employee references (e.g., *"Update per day rate to 600"*, *"Update advance to 1000"*, *"Update present days to 25"*, *"Update setting in chat"*) apply to **all employees across the organization**.
-
----
-
-## 🌐 API & Frontend Route Reference Table
-
-| Category | HTTP Method / Route | Path / Endpoint | Description |
-|---|---|---|---|
-| **Frontend Portal** | `GET` | `/login` | Two-partition login portal with HR Admin quick access |
-| | `GET` | `/dashboard` | AI Assistant workspace & interactive chat |
-| | `GET` | `/employees` | Employee directory & master table viewer |
-| | `GET` | `/payroll` | Monthly payroll summary & net pay breakdowns |
-| | `GET` | `/payslips` | Payslip generator & bulk ZIP downloader |
-| | `GET` | `/reports` | Statutory reports & Form XXII Advances PDF builder |
-| | `GET` | `/settings` | Register defaults & company configuration |
-| **AI Chat API** | `POST` | `/api/ai/chat` | Main streaming chat endpoint for rule-based & LLM actions |
-| **Spreadsheet Upload** | `POST` | `/api/upload/preview` | Preview file headers and auto-detected column mapping |
-| | `POST` | `/api/upload/confirm` | Confirm column mapping and import records into DB |
-| | `POST` | `/api/upload/direct-import` | Direct import of Excel/CSV directly inside AI Chat |
-| | `GET` | `/api/upload/status` | Check if payroll data is loaded and get record count |
-| | `POST` | `/api/upload/reset` | Clear all payroll data from database |
-| **Payslips & Reports**| `GET` | `/api/payslip/pdf/{emp_code}` | Download single employee PDF payslip |
-| | `GET` | `/api/payslip/bulk-zip` | Download all employee PDF payslips as a ZIP archive |
-| | `GET` | `/api/payslip/advances-register` | Download official Form XXII Register of Advances PDF |
-| **Employees** | `GET` | `/api/employees/` | Retrieve all employee master & payroll records |
-| | `GET` | `/api/employees/{emp_code}` | Retrieve single employee record by code |
-| | `POST` | `/api/employees/upload-master` | Upload master Excel spreadsheet |
-| | `GET` | `/api/employees/upload-status` | Get master file upload metadata |
-| | `GET` | `/api/employees/download-current` | Download active master Excel spreadsheet |
-| **Payroll Metrics** | `GET` | `/api/payroll/summary` | Get organization-wide total gross, net pay, PF, ESI |
-| | `GET` | `/api/payroll/department-summary`| Get department-wise salary breakdowns |
-| **Attendance** | `GET` | `/api/attendance/summary` | Get attendance summary (Present, Absent, Overtime) |
-| | `GET` | `/api/attendance/absent` | Get list of absent employees |
-| | `GET` | `/api/attendance/overtime` | Get overtime report with extra hours and pay |
-| **System** | `GET` | `/health` | System health check endpoint |
-
----
-
-## ⚡ Installation & Local Setup Guide
-
-Follow these steps to set up and run Payroll AI on your local machine.
+## ⚡ Installation
 
 ### Prerequisites
-- **Python**: Version 3.9 or higher
-- **Node.js**: Version 18.0 or higher
+- **Python**: Version `3.9` or higher
+- **Node.js**: Version `18.0` or higher
 - **npm**: Package manager (included with Node.js)
 
 ---
 
-### Step 1: Backend Setup (FastAPI)
+### Step 1: Clone the Repository
+```bash
+git clone https://github.com/dhr4328/PayrollAI.git
+cd PayrollAI
+```
 
-1. Navigate to the project root directory:
-   ```bash
-   cd "Rag Payroll"
-   ```
+---
 
-2. Create a Python virtual environment:
+### Step 2: Backend Setup (FastAPI)
+
+1. Create a Python virtual environment:
    ```bash
    python -m venv venv
    ```
 
-3. Activate the virtual environment:
-   - **Windows**:
+2. Activate the virtual environment:
+   - **Windows (PowerShell)**:
      ```powershell
      .\venv\Scripts\activate
      ```
@@ -329,32 +202,26 @@ Follow these steps to set up and run Payroll AI on your local machine.
      source venv/bin/activate
      ```
 
-4. Install backend dependencies:
+3. Install Python dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-5. Set up environment variables:
-   Create a `.env` file in the `backend/` directory (or edit `backend/.env`):
-   ```env
-   NVIDIA_API_KEY=your_optional_nvidia_api_key_here
-   NVIDIA_MODEL=nvidia/nemotron-4-340b-instruct
-   NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1
-   ```
+4. Configure environment variables (see [Environment Variables](#-environment-variables)).
 
-6. Start the FastAPI backend server:
+5. Start the FastAPI backend server:
    ```bash
    python backend/main.py
    ```
-   The backend API server will be available at **`http://127.0.0.1:8000`**. You can view interactive OpenAPI documentation at `http://127.0.0.1:8000/docs`.
+   The backend API will run at **`http://127.0.0.1:8000`** (Swagger docs available at `http://127.0.0.1:8000/docs`).
 
 ---
 
-### Step 2: Frontend Setup (Next.js)
+### Step 3: Frontend Setup (Next.js)
 
-1. Open a new terminal window and navigate to the frontend directory:
+1. Open a new terminal and navigate to the frontend directory:
    ```bash
-   cd "Rag Payroll/payroll-ai"
+   cd payroll-ai
    ```
 
 2. Install Node.js dependencies:
@@ -367,31 +234,97 @@ Follow these steps to set up and run Payroll AI on your local machine.
    npm run dev
    ```
 
-4. Access the web application:
-   Open your browser and navigate to **`http://localhost:3000`** (auto-redirects to **`http://localhost:3000/login`**).
+4. Open your browser and navigate to **`http://localhost:3000`** (auto-redirects to `/login`).
 
 ---
 
-## 🧪 Running Verification Tests
+## 🔑 Environment Variables
 
-To verify backend initialization and routing:
+Create a `.env` file in the `backend/` directory:
 
-```bash
-.\venv\Scripts\python.exe -c "import sys; sys.path.insert(0, 'backend'); import database; database.init_db(); print('Database verified cleanly.')"
+```env
+# NVIDIA Nemotron API Credentials (Optional - Tier 1 Rule Engine works offline)
+NVIDIA_API_KEY=your_nvidia_api_key_here
+NVIDIA_MODEL=nvidia/nemotron-4-340b-instruct
+NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1
+
+# Backend Server Configuration
+HOST=127.0.0.1
+PORT=8000
 ```
 
-To test the frontend build:
+For the frontend (`payroll-ai/.env.local`):
 
-```bash
-cd payroll-ai
-npm run build
+```env
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 ```
 
 ---
 
-## 📜 License
+## 📡 API Documentation
 
-This project is released under the **MIT License**. Feel free to use, modify, and distribute it for personal or commercial applications.
+### **1. AI Chat API**
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/ai/chat` | Main streaming chat endpoint for rule-based & LLM actions |
+
+### **2. Employee Management API**
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/employees/` | List all employee master & payroll records |
+| `GET` | `/api/employees/{emp_code}` | Retrieve single employee profile details |
+| `POST` | `/api/employees/upload-master` | Upload master Excel spreadsheet |
+| `GET` | `/api/employees/download-current` | Export current active employee master Excel |
+
+### **3. Payroll & Metrics API**
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/payroll/summary` | Organization-wide gross pay, net pay, PF, ESI summary |
+| `GET` | `/api/payroll/department-summary` | Department-wise salary breakdown metrics |
+
+### **4. Attendance & Overtime API**
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/attendance/summary` | Attendance metrics (Present, Absent, Overtime counts) |
+| `GET` | `/api/attendance/absent` | List of absent employees |
+| `GET` | `/api/attendance/overtime` | Overtime report with extra duty hours & pay |
+
+### **5. Payslips & PDF Generation API**
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/payslip/pdf/{emp_code}` | Download single employee PDF payslip |
+| `GET` | `/api/payslip/bulk-zip` | Download ZIP archive of all employee PDF payslips |
+| `GET` | `/api/payslip/advances-register` | Download official Form XXII Register of Advances PDF |
+
+### **6. Spreadsheet Upload & Column Mapper API**
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/upload/preview` | Preview file headers & auto-detected fuzzy column mapping |
+| `POST` | `/api/upload/confirm` | Confirm column mapping & import data into SQLite |
+| `POST` | `/api/upload/direct-import` | Direct inline spreadsheet import within AI Chat |
+| `GET` | `/api/upload/status` | Check dataset load status and active record count |
+| `POST` | `/api/upload/reset` | Clear all payroll data from database |
+
+---
+
+## 🚀 Future Improvements
+
+- [ ] **Multi-Tenant Support**: Support multiple organization workspaces with role-based access control (RBAC).
+- [ ] **Automated Email & WhatsApp Delivery**: Send monthly PDF payslips directly to employees via `fastapi-mail` and WhatsApp Business API.
+- [ ] **Biometric Hardware Sync**: Native integration with ZKTeco and Hikvision attendance terminals for real-time check-in logs.
+- [ ] **Direct Bank Payout Integration**: One-click salary disbursal via RazorpayX and corporate banking APIs.
+- [ ] **Multi-Country Statutory Engines**: Adaptable tax compliance modules for US (W-2 / 401k), UK (PAYE), and UAE (WPS).
+
+---
+
+## 👨‍💻 Author
+
+**Payroll AI Team**  
+*Built with ❤️ for HR teams, finance managers, and modern enterprises.*
+
+- **GitHub**: [@dhr4328](https://github.com/dhr4328)
+- **Repository**: [https://github.com/dhr4328/PayrollAI](https://github.com/dhr4328/PayrollAI)
+- **Project**: Payroll AI — AI-Powered Payroll & HR Management Platform
 
 ---
 
