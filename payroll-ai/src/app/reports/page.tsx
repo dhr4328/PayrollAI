@@ -13,7 +13,7 @@ import { Employee } from '@/types/employee';
 import EmptyDataPrompt from '@/components/EmptyDataPrompt';
 import UploadModal from '@/components/UploadModal';
 
-const COLORS = ['#2563eb', '#4f46e5', '#0891b2', '#059669', '#d97706', '#dc2626', '#7c3aed', '#db2777'];
+const COLORS = ['#1d4ed8', '#1e40af', '#1e3a8a', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'];
 
 // localStorage keys for advance header settings
 const LS_CONTRACTOR    = 'adv_contractor';
@@ -209,36 +209,36 @@ export default function ReportsPage() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
       {/* Quick exports */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
         {reportCards.map((r: any) => (
-          <div key={r.title} style={{
-            background: 'var(--card-bg)', border: '1px solid var(--card-border)',
-            borderRadius: 'var(--radius)', padding: '16px',
-            display: 'flex', flexDirection: 'column', gap: '10px', cursor: 'pointer',
-            transition: 'box-shadow 0.15s ease', boxShadow: 'var(--shadow-sm)',
-          }}
-            onMouseEnter={e => (e.currentTarget.style.boxShadow = 'var(--shadow-md)')}
-            onMouseLeave={e => (e.currentTarget.style.boxShadow = 'var(--shadow-sm)')}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '9px', background: r.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <r.icon size={17} color={r.color} />
+          <div
+            key={r.title}
+            style={{
+              background: 'var(--card-bg)', border: '1px solid var(--card-border)',
+              borderRadius: 'var(--radius)', padding: '14px 16px',
+              display: 'flex', flexDirection: 'column', gap: '8px',
+              borderLeft: `3px solid ${r.color}`,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <r.icon size={14} color={r.color} />
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{r.title}</span>
             </div>
-            <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{r.title}</div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{r.desc}</div>
-            </div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{r.desc}</div>
             {r.isAdvance ? (
               <a
                 href={advancePdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px',
-                  borderRadius: '6px', border: `1px solid ${r.color}30`, background: r.bg,
-                  color: r.color, fontSize: '11px', fontWeight: 600, cursor: 'pointer',
-                  alignSelf: 'flex-start', textDecoration: 'none',
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  padding: '5px 10px', borderRadius: 5,
+                  border: '1px solid var(--border)', background: 'white',
+                  color: 'var(--text-secondary)', fontSize: '11px', fontWeight: 500,
+                  textDecoration: 'none', alignSelf: 'flex-start',
                 }}
               >
-                <Download size={12} /> Download PDF
+                <Download size={11} /> Download PDF
               </a>
             ) : r.isOvertime ? (
               <a
@@ -246,43 +246,62 @@ export default function ReportsPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px',
-                  borderRadius: '6px', border: `1px solid ${r.color}30`, background: r.bg,
-                  color: r.color, fontSize: '11px', fontWeight: 600, cursor: 'pointer',
-                  alignSelf: 'flex-start', textDecoration: 'none',
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  padding: '5px 10px', borderRadius: 5,
+                  border: '1px solid var(--border)', background: 'white',
+                  color: 'var(--text-secondary)', fontSize: '11px', fontWeight: 500,
+                  textDecoration: 'none', alignSelf: 'flex-start',
                 }}
               >
-                <Download size={12} /> Download PDF
+                <Download size={11} /> Download PDF
               </a>
             ) : (
-              <button style={{
-                display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px',
-                borderRadius: '6px', border: `1px solid ${r.color}30`, background: r.bg,
-                color: r.color, fontSize: '11px', fontWeight: 600, cursor: 'pointer', alignSelf: 'flex-start',
-              }}>
-                <Download size={12} /> Export
+              <button
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                  padding: '5px 10px', borderRadius: 5,
+                  border: '1px solid var(--border)', background: 'white',
+                  color: 'var(--text-secondary)', fontSize: '11px', fontWeight: 500,
+                  cursor: 'pointer', alignSelf: 'flex-start',
+                }}
+              >
+                <Download size={11} /> Export
               </button>
             )}
           </div>
         ))}
       </div>
 
-      {/* Summary banner */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1e3a5f, #1e1b4b)',
-        borderRadius: 'var(--radius-lg)', padding: '20px 24px',
-        display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '20px',
-      }}>
+      {/* Summary strip — clean white card, no gradient */}
+      <div
+        style={{
+          background: 'var(--card-bg)',
+          border: '1px solid var(--card-border)',
+          borderRadius: 'var(--radius)',
+          padding: '16px 20px',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+          gap: 0,
+        }}
+      >
         {[
-          { label: 'Employees', value: summary.count },
+          { label: 'Employees',   value: summary.count },
           { label: 'Total Gross', value: formatCurrency(summary.totalGross) },
-          { label: 'Total Net', value: formatCurrency(summary.totalNet) },
-          { label: 'Total PF', value: formatCurrency(summary.totalPF) },
-          { label: 'Total ESI', value: formatCurrency(summary.totalESI) },
-        ].map(s => (
-          <div key={s.label}>
-            <div style={{ color: 'white', fontSize: '18px', fontWeight: 700 }}>{s.value}</div>
-            <div style={{ color: '#94a3b8', fontSize: '11px', marginTop: '2px' }}>{s.label}</div>
+          { label: 'Total Net',   value: formatCurrency(summary.totalNet) },
+          { label: 'Total PF',    value: formatCurrency(summary.totalPF) },
+          { label: 'Total ESI',   value: formatCurrency(summary.totalESI) },
+        ].map((s, i, arr) => (
+          <div
+            key={s.label}
+            style={{
+              padding: '0 16px',
+              borderRight: i < arr.length - 1 ? '1px solid var(--card-border)' : 'none',
+            }}
+          >
+            <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>
+              {s.value}
+            </div>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: 3 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -361,10 +380,10 @@ export default function ReportsPage() {
           padding: '14px 18px',
           borderBottom: '1px solid var(--card-border)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          background: 'linear-gradient(135deg, #fffbeb, #fef3c7)',
+          background: 'var(--warning-light)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: '#fde68a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--warning-light)', border: '1px solid var(--warning-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <ClipboardList size={16} color="#d97706" />
             </div>
             <div>
@@ -454,10 +473,10 @@ export default function ReportsPage() {
           padding: '14px 18px',
           borderBottom: '1px solid var(--card-border)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          background: 'linear-gradient(135deg, #eff6ff, #dbeafe)',
+          background: 'var(--primary-light)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: '#bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--primary-light)', border: '1px solid var(--primary-border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <ClipboardList size={16} color="#1d4ed8" />
             </div>
             <div>
@@ -472,7 +491,7 @@ export default function ReportsPage() {
             style={{
               display: 'flex', alignItems: 'center', gap: '6px',
               padding: '8px 16px', borderRadius: '8px',
-              background: '#2563eb', color: 'white',
+              background: 'var(--primary)', color: 'white',
               fontSize: '12px', fontWeight: 600,
               textDecoration: 'none', cursor: 'pointer',
             }}

@@ -329,10 +329,10 @@ export default function PayslipsPage() {
           {filtered.map(emp => (
             <button key={emp.empCode} onClick={() => setSelected(emp)} style={{
               width: '100%', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '10px',
-              background: selected?.empCode === emp.empCode ? '#eff6ff' : 'transparent',
+              background: selected?.empCode === emp.empCode ? 'var(--primary-light)' : 'transparent',
               border: 'none', borderBottom: '1px solid var(--card-border)',
               cursor: 'pointer', textAlign: 'left',
-              borderLeft: selected?.empCode === emp.empCode ? '3px solid #2563eb' : '3px solid transparent',
+              borderLeft: selected?.empCode === emp.empCode ? '3px solid var(--primary)' : '3px solid transparent',
             }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: `hsl(${(emp.id * 43) % 360}, 60%, 92%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, color: `hsl(${(emp.id * 43) % 360}, 50%, 35%)`, flexShrink: 0 }}>
                 {emp.name.split(' ').slice(0, 2).map(n => n[0]).join('')}
@@ -370,13 +370,13 @@ export default function PayslipsPage() {
                 <button
                   onClick={handleDownloadPdf}
                   disabled={downloadingPdf}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '7px 14px', borderRadius: '7px', border: 'none', background: '#2563eb', color: 'white', fontSize: '12px', fontWeight: 600, cursor: downloadingPdf ? 'not-allowed' : 'pointer', opacity: downloadingPdf ? 0.7 : 1 }}>
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '7px 14px', borderRadius: '7px', border: 'none', background: 'var(--primary)', color: 'white', fontSize: '12px', fontWeight: 600, cursor: downloadingPdf ? 'not-allowed' : 'pointer', opacity: downloadingPdf ? 0.7 : 1 }}>
                   {downloadingPdf ? <Loader2 size={13} style={{ animation: 'spin 1s linear infinite' }} /> : <Download size={13} />}
                   {downloadingPdf ? 'Generating...' : 'Download PDF'}
                 </button>
               </div>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', justifyContent: 'center', background: '#f1f5f9' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', justifyContent: 'center', background: 'var(--content-bg)' }}>
               <div ref={printRef}>
                 <PayslipDocument emp={selected} company={DEMO_COMPANY} attendanceList={attendanceList} />
               </div>

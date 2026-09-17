@@ -17,9 +17,9 @@ export default function UploadBanner({ rowCount, filename, onReUpload }: UploadB
     <div style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       padding: '10px 16px',
-      background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)',
-      border: '1px solid #bbf7d0',
-      borderRadius: '10px',
+      background: 'var(--success-light)',
+      border: '1px solid var(--success-border)',
+      borderRadius: 'var(--radius)',
       marginBottom: '16px',
       gap: 12,
       animation: 'slideDown 0.3s ease',

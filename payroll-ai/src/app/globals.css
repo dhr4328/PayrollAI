@@ -2,43 +2,65 @@
 
 @layer base {
   :root {
-    --sidebar-bg: #0f1117;
-    --sidebar-border: #1e2433;
-    --sidebar-text: #8b95a8;
-    --sidebar-text-active: #f1f5f9;
-    --sidebar-active-bg: #1a2236;
-    --sidebar-hover-bg: #161d2e;
+    /* ── Sidebar (white, clean) ── */
+    --sidebar-bg: #ffffff;
+    --sidebar-border: #e5e7eb;
+    --sidebar-text: #6b7280;
+    --sidebar-text-active: #111827;
+    --sidebar-active-bg: #f3f4f6;
+    --sidebar-hover-bg: #f9fafb;
+    --sidebar-width-collapsed: 60px;
+    --sidebar-width-expanded: 224px;
 
+    /* ── Layout ── */
     --content-bg: #f5f7fa;
     --card-bg: #ffffff;
-    --card-border: #e8edf5;
+    --card-border: #e5e7eb;
+    --header-height: 52px;
 
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
+    /* ── Primary (deep navy-blue, not bright blue) ── */
+    --primary: #1d4ed8;
+    --primary-hover: #1e40af;
     --primary-light: #eff6ff;
-    --accent: #4f46e5;
-    --accent-light: #eef2ff;
+    --primary-border: #bfdbfe;
 
+    /* ── Semantic ── */
     --success: #16a34a;
     --success-light: #f0fdf4;
-    --warning: #d97706;
+    --success-border: #bbf7d0;
+    --warning: #b45309;
     --warning-light: #fffbeb;
+    --warning-border: #fde68a;
     --danger: #dc2626;
     --danger-light: #fef2f2;
+    --danger-border: #fecaca;
+    --info: #0369a1;
+    --info-light: #f0f9ff;
+    --info-border: #bae6fd;
 
-    --text-primary: #0f172a;
-    --text-secondary: #64748b;
-    --text-muted: #94a3b8;
-    --border: #e2e8f0;
+    /* ── Text ── */
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --text-muted: #9ca3af;
+    --text-disabled: #d1d5db;
 
-    --radius: 10px;
+    /* ── Borders ── */
+    --border: #e5e7eb;
+    --border-strong: #d1d5db;
+
+    /* ── Radius ── */
+    --radius-xs: 4px;
     --radius-sm: 6px;
-    --radius-lg: 14px;
+    --radius: 8px;
+    --radius-md: 10px;
+    --radius-lg: 12px;
 
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    /* ── Shadows (very subtle, border-first approach) ── */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-md: 0 8px 12px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 16px 24px -5px rgb(0 0 0 / 0.09), 0 8px 10px -6px rgb(0 0 0 / 0.04);
   }
 
   * {
@@ -51,18 +73,31 @@
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-color: var(--content-bg);
     color: var(--text-primary);
     line-height: 1.5;
   }
 
+  /* ── Accessible focus states ── */
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* ── Button & input font inheritance ── */
+  button, input, select, textarea {
+    font-family: inherit;
+  }
+
   ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
@@ -96,15 +131,15 @@
   from { transform: translateX(0); opacity: 1; }
   to { transform: translateX(100%); opacity: 0; }
 }
-.slide-in-right { animation: slideInRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.slide-out-right { animation: slideOutRight 0.22s ease-in forwards; }
+.slide-in-right { animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.slide-out-right { animation: slideOutRight 0.2s ease-in forwards; }
 
 /* Fade in */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.fade-in { animation: fadeIn 0.2s ease forwards; }
+.fade-in { animation: fadeIn 0.15s ease forwards; }
 
 /* Tool call card shimmer */
 @keyframes shimmer {
@@ -112,7 +147,7 @@
   100% { background-position: 200% 0; }
 }
 .shimmer {
-  background: linear-gradient(90deg, #f0f4f8 25%, #e2e8f0 50%, #f0f4f8 75%);
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

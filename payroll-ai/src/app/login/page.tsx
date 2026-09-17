@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Building2, Bot, Sparkles, ShieldCheck, FileSpreadsheet, FileText,
-  Mail, Lock, Eye, EyeOff, ArrowRight, Zap, CheckCircle2, UserCheck, KeyRound
+  Building2, Bot, ShieldCheck, FileText, FileSpreadsheet,
+  Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle2
 } from 'lucide-react';
 import { createNewSession } from '@/lib/authSession';
 
@@ -12,463 +12,321 @@ export default function LoginPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState('admin@payrollai.com');
-  const [password, setPassword] = useState('••••••••••••');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [isQuickLoggingIn, setIsQuickLoggingIn] = useState(false);
 
   const handleLogin = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setIsLoading(true);
     createNewSession(email);
-    setTimeout(() => {
-      router.push('/dashboard');
-    }, 500);
+    setTimeout(() => router.push('/dashboard'), 500);
   };
 
-  const handleQuickHRLogin = () => {
-    setIsQuickLoggingIn(true);
-    setEmail('admin@payrollai.com');
-    setPassword('adminPass123!');
+  const handleQuickLogin = () => {
     setIsLoading(true);
     createNewSession('admin@payrollai.com');
-
-    setTimeout(() => {
-      router.push('/dashboard');
-    }, 600);
+    setTimeout(() => router.push('/dashboard'), 600);
   };
 
+  const features = [
+    { icon: Bot,            label: 'AI Co-Pilot',           desc: 'Natural language commands for payroll and HR management.' },
+    { icon: ShieldCheck,    label: 'Statutory engine',       desc: 'Automated PF (12%/13%), ESI (0.75%/3.25%), PT, and overtime.' },
+    { icon: FileText,       label: 'PDF exports',            desc: 'Publication-ready payslips and Form XXII statutory registers.' },
+    { icon: FileSpreadsheet, label: 'Smart column mapping', desc: 'Auto-detects Excel and CSV headers using fuzzy matching.' },
+  ];
+
   return (
-    <div style={{
-      display: 'flex',
-      width: '100vw',
-      height: '100vh',
-      background: '#f8fafc',
-      color: '#0f172a',
-      fontFamily: 'Inter, system-ui, sans-serif',
-      overflow: 'hidden',
-    }}>
-      {/* ───────────────────────────────────────────────────────────── */}
-      {/* LEFT PARTITION — Company Branding, Info & Feature Showcase   */}
-      {/* ───────────────────────────────────────────────────────────── */}
-      <div style={{
-        flex: '1.1',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e293b 100%)',
-        position: 'relative',
+    <div
+      style={{
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        padding: '48px 56px',
-        color: '#ffffff',
+        width: '100vw',
+        height: '100vh',
+        fontFamily: 'Inter, system-ui, sans-serif',
         overflow: 'hidden',
-      }}>
-        {/* Decorative ambient lighting blobs */}
-        <div style={{
-          position: 'absolute',
-          top: '-15%',
-          left: '-10%',
-          width: '500px',
-          height: '500px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(37,99,235,0.22) 0%, rgba(0,0,0,0) 70%)',
-          pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '-15%',
-          right: '-10%',
-          width: '600px',
-          height: '600px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(79,70,229,0.2) 0%, rgba(0,0,0,0) 70%)',
-          pointerEvents: 'none',
-        }} />
-
-        {/* Top Branding Section */}
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
-            <div style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 8px 24px rgba(37, 99, 235, 0.4)',
-            }}>
-              <Building2 size={24} color="white" />
-            </div>
-            <div>
-              <div style={{ fontSize: '22px', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff' }}>
-                PAYROLL AI
-              </div>
-            </div>
-          </div>
-
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '6px 14px',
-            borderRadius: '20px',
-            background: 'rgba(99, 102, 241, 0.15)',
-            border: '1px solid rgba(129, 140, 248, 0.3)',
-            color: '#c7d2fe',
-            fontSize: '12px',
-            fontWeight: 600,
-            marginBottom: '20px',
-          }}>
-            <Sparkles size={14} color="#818cf8" />
-            AI-First Payroll & HR Management Platform
-          </div>
-
-          <h1 style={{
-            fontSize: '34px',
-            fontWeight: 800,
-            lineHeight: 1.25,
-            marginBottom: '16px',
-            color: '#ffffff',
-            letterSpacing: '-0.03em',
-          }}>
-            Intelligent Payroll Automation & Statutory Compliance.
-          </h1>
-
-          <p style={{
-            color: '#94a3b8',
-            fontSize: '14px',
-            lineHeight: 1.65,
-            maxWidth: '520px',
-            marginBottom: '32px',
-          }}>
-            Welcome to **PayrollAI**. Effortlessly manage employee master records, attendance logs, statutory deductions (PF, ESI, PT), ReportLab PDF payslip generation, and Form XXII compliance with our hybrid AI Co-pilot assistant.
-          </p>
-        </div>
-
-        {/* Feature Highlights Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '14px',
+      }}
+    >
+      {/* Left — Company context */}
+      <div
+        style={{
+          flex: '1.1',
+          background: '#0f172a',
           position: 'relative',
-          zIndex: 2,
-          marginBottom: '32px',
-        }}>
-          <div style={{
-            padding: '16px',
-            borderRadius: '12px',
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(37, 99, 235, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Bot size={16} color="#60a5fa" />
-              </div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#f8fafc' }}>AI Co-Pilot Assistant</div>
-            </div>
-            <div style={{ fontSize: '12px', color: '#94a3b8', lineHeight: 1.45 }}>
-              Natural language chat commands for Whole-Company & employee updates.
-            </div>
-          </div>
-
-          <div style={{
-            padding: '16px',
-            borderRadius: '12px',
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(16, 185, 129, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ShieldCheck size={16} color="#34d399" />
-              </div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#f8fafc' }}>Statutory Engine</div>
-            </div>
-            <div style={{ fontSize: '12px', color: '#94a3b8', lineHeight: 1.45 }}>
-              Real-time calculation of PF (12%/13%), ESI (0.75%/3.25%), PT, and Overtime.
-            </div>
-          </div>
-
-          <div style={{
-            padding: '16px',
-            borderRadius: '12px',
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(245, 158, 11, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <FileText size={16} color="#fbbf24" />
-              </div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#f8fafc' }}>PDF & Form XXII Export</div>
-            </div>
-            <div style={{ fontSize: '12px', color: '#94a3b8', lineHeight: 1.45 }}>
-              Publication-ready PDF payslips, bulk ZIP downloads, and Form XXII reports.
-            </div>
-          </div>
-
-          <div style={{
-            padding: '16px',
-            borderRadius: '12px',
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(168, 85, 247, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <FileSpreadsheet size={16} color="#c084fc" />
-              </div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#f8fafc' }}>Smart Column Mapper</div>
-            </div>
-            <div style={{ fontSize: '12px', color: '#94a3b8', lineHeight: 1.45 }}>
-              Intelligent fuzzy matching (`difflib`) to auto-detect Excel/CSV headers.
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Status Card */}
-        <div style={{
-          position: 'relative',
-          zIndex: 2,
-          padding: '12px 18px',
-          borderRadius: '12px',
-          background: 'rgba(255, 255, 255, 0.05)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
           display: 'flex',
-          alignItems: 'center',
+          flexDirection: 'column',
           justifyContent: 'space-between',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <CheckCircle2 size={15} color="#10b981" />
-            <span style={{ fontSize: '12px', fontWeight: 600, color: '#e2e8f0' }}>Payroll AI HR Portal Active</span>
+          padding: '48px 52px',
+          color: '#ffffff',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Very subtle ambient blobs — reduced from original */}
+        <div
+          style={{
+            position: 'absolute', top: '-20%', left: '-15%',
+            width: 480, height: 480, borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(29,78,216,0.14) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Brand */}
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 40 }}>
+            <div
+              style={{
+                width: 36, height: 36, borderRadius: 9,
+                background: '#1d4ed8',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <Building2 size={20} color="white" strokeWidth={2} />
+            </div>
+            <span style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '-0.02em', color: '#fff' }}>
+              PayrollAI
+            </span>
           </div>
-          <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 500 }}>v1.0.0 • 100% Compliant</span>
+
+          <h1
+            style={{
+              fontSize: '28px', fontWeight: 700, lineHeight: 1.3,
+              marginBottom: 14, color: '#f8fafc', letterSpacing: '-0.02em',
+              maxWidth: 460,
+            }}
+          >
+            Payroll and HR management for Indian enterprises.
+          </h1>
+          <p
+            style={{
+              color: '#64748b', fontSize: '14px', lineHeight: 1.65,
+              maxWidth: 440, marginBottom: 40,
+            }}
+          >
+            Manage employee records, attendance, statutory deductions, and payslip generation with an integrated AI assistant.
+          </p>
+
+          {/* Feature list */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {features.map(({ icon: Icon, label, desc }) => (
+              <div key={label} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                <div
+                  style={{
+                    width: 28, height: 28, borderRadius: 7, flexShrink: 0, marginTop: 1,
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                >
+                  <Icon size={14} color="#94a3b8" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0', marginBottom: 2 }}>
+                    {label}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#64748b', lineHeight: 1.4 }}>{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer status */}
+        <div
+          style={{
+            position: 'relative', zIndex: 2,
+            display: 'flex', alignItems: 'center', gap: 8,
+          }}
+        >
+          <CheckCircle2 size={14} color="#16a34a" />
+          <span style={{ fontSize: '12px', color: '#475569', fontWeight: 500 }}>
+            PayrollAI HR Portal · v1.0.0 · India Compliant
+          </span>
         </div>
       </div>
 
-      {/* ───────────────────────────────────────────────────────────── */}
-      {/* RIGHT PARTITION — Login Form & Single HR Quick Access Login   */}
-      {/* ───────────────────────────────────────────────────────────── */}
-      <div style={{
-        flex: '0.9',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '40px 60px',
-        background: 'var(--content-bg)',
-        position: 'relative',
-        overflowY: 'auto',
-      }}>
-        <div style={{
-          width: '100%',
-          maxWidth: '430px',
-          background: 'var(--card-bg)',
-          padding: '36px 32px',
-          borderRadius: '16px',
-          border: '1px solid var(--card-border)',
-          boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)',
-        }}>
-
-          {/* Welcome Header */}
-          <div style={{ marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '6px', letterSpacing: '-0.02em' }}>
-              Welcome Back 👋
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.4 }}>
-              Sign in to manage your **Payroll AI** workspace.
-            </p>
-          </div>
-
-          {/* ⚡ SINGLE HR QUICK ACCESS LOGIN ACTION */}
-          <div style={{
-            padding: '16px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #eff6ff 0%, #eef2ff 100%)',
-            border: '1px solid #bfdbfe',
-            marginBottom: '24px',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 700, color: '#1e3a8a' }}>
-                <Zap size={15} color="#2563eb" />
-                Quick Access Demo Login
-              </div>
-              <span style={{ fontSize: '10px', background: '#2563eb', color: 'white', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
-                1-Click Access
-              </span>
+      {/* Right — Login form */}
+      <div
+        style={{
+          flex: '0.9',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '40px',
+          background: '#f5f7fa',
+          overflowY: 'auto',
+        }}
+      >
+        <div
+          style={{
+            width: '100%',
+            maxWidth: 400,
+            background: 'white',
+            padding: '32px',
+            borderRadius: '10px',
+            border: '1px solid #e5e7eb',
+          }}
+        >
+          {/* Quick access */}
+          <div
+            style={{
+              padding: '14px',
+              borderRadius: 8,
+              background: '#f8fafc',
+              border: '1px solid #e5e7eb',
+              marginBottom: 24,
+            }}
+          >
+            <div style={{ fontSize: '12px', fontWeight: 600, color: '#111827', marginBottom: 6 }}>
+              Quick access
             </div>
-            <div style={{ fontSize: '11px', color: '#475569', marginBottom: '12px', lineHeight: 1.4 }}>
-              Click below to sign in instantly with full HR Admin privileges:
+            <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: 10, lineHeight: 1.4 }}>
+              Sign in instantly with full HR Admin access:
             </div>
-
-            {/* Single HR Admin Quick Action Card */}
             <button
-              type="button"
-              onClick={handleQuickHRLogin}
+              onClick={handleQuickLogin}
+              disabled={isLoading}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%',
-                padding: '10px 14px',
-                borderRadius: '10px',
-                background: isQuickLoggingIn ? '#2563eb' : '#ffffff',
-                border: '1px solid #93c5fd',
-                color: isQuickLoggingIn ? 'white' : '#0f172a',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                textAlign: 'left',
-                boxShadow: '0 2px 6px rgba(37, 99, 235, 0.1)',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                width: '100%', padding: '9px 12px', borderRadius: 7,
+                background: isLoading ? '#1d4ed8' : 'white',
+                border: '1px solid #d1d5db',
+                color: isLoading ? 'white' : '#111827',
+                cursor: 'pointer', textAlign: 'left',
+                transition: 'all 0.15s',
               }}
+              onMouseEnter={e => { if (!isLoading) { e.currentTarget.style.borderColor = '#1d4ed8'; e.currentTarget.style.background = '#eff6ff'; } }}
+              onMouseLeave={e => { if (!isLoading) { e.currentTarget.style.borderColor = '#d1d5db'; e.currentTarget.style.background = 'white'; } }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{
-                  width: '32px', height: '32px', borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'white', fontSize: '11px', fontWeight: 800, flexShrink: 0,
-                }}>
-                  HR
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                <div
+                  style={{
+                    width: 28, height: 28, borderRadius: '50%',
+                    background: isLoading ? 'rgba(255,255,255,0.2)' : '#eff6ff',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <span style={{ fontSize: '9px', fontWeight: 800, color: isLoading ? 'white' : '#1d4ed8' }}>
+                    HR
+                  </span>
                 </div>
                 <div>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: isQuickLoggingIn ? 'white' : '#0f172a' }}>
-                    HR Admin Login
+                  <div style={{ fontSize: '12px', fontWeight: 600, color: isLoading ? 'white' : '#111827' }}>
+                    {isLoading ? 'Signing in…' : 'HR Admin'}
                   </div>
-                  <div style={{ fontSize: '10px', color: isQuickLoggingIn ? '#dbeafe' : '#64748b' }}>
-                    admin@payrollai.com • Full Access
+                  <div style={{ fontSize: '10px', color: isLoading ? 'rgba(255,255,255,0.7)' : '#9ca3af' }}>
+                    admin@payrollai.com · Full access
                   </div>
                 </div>
               </div>
-              <ArrowRight size={15} color={isQuickLoggingIn ? 'white' : '#2563eb'} />
+              {!isLoading && <ArrowRight size={14} color="#1d4ed8" />}
             </button>
           </div>
 
-          {/* Form Divider */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-            <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>Or Sign In With Email</span>
-            <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+          {/* Divider */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+            <div style={{ flex: 1, height: 1, background: '#e5e7eb' }} />
+            <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              or sign in with email
+            </span>
+            <div style={{ flex: 1, height: 1, background: '#e5e7eb' }} />
           </div>
 
-          {/* Standard Credentials Form */}
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* Email Field */}
+          {/* Login form */}
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>
-                Work Email Address
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 5 }}>
+                Work email
               </label>
               <div style={{ position: 'relative' }}>
-                <Mail size={15} color="var(--text-secondary)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                <Mail size={13} color="#9ca3af" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
                 <input
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   placeholder="admin@payrollai.com"
                   style={{
-                    width: '100%',
-                    padding: '10px 12px 10px 38px',
-                    borderRadius: '8px',
-                    background: '#ffffff',
-                    border: '1px solid var(--border)',
-                    color: 'var(--text-primary)',
-                    fontSize: '13px',
-                    outline: 'none',
-                    transition: 'all 0.2s ease',
+                    width: '100%', padding: '9px 10px 9px 32px',
+                    borderRadius: 7, background: 'white',
+                    border: '1px solid #e5e7eb', color: '#111827',
+                    fontSize: '13px', outline: 'none', boxSizing: 'border-box',
+                    transition: 'border-color 0.12s',
+                    fontFamily: 'inherit',
                   }}
+                  onFocus={e => (e.target.style.borderColor = '#1d4ed8')}
+                  onBlur={e => (e.target.style.borderColor = '#e5e7eb')}
                 />
               </div>
             </div>
 
-            {/* Password Field */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#374151', marginBottom: 5 }}>
                 Password
               </label>
               <div style={{ position: 'relative' }}>
-                <Lock size={15} color="var(--text-secondary)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                <Lock size={13} color="#9ca3af" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Enter your password"
                   style={{
-                    width: '100%',
-                    padding: '10px 38px 10px 38px',
-                    borderRadius: '8px',
-                    background: '#ffffff',
-                    border: '1px solid var(--border)',
-                    color: 'var(--text-primary)',
-                    fontSize: '13px',
-                    outline: 'none',
-                    transition: 'all 0.2s ease',
+                    width: '100%', padding: '9px 36px 9px 32px',
+                    borderRadius: 7, background: 'white',
+                    border: '1px solid #e5e7eb', color: '#111827',
+                    fontSize: '13px', outline: 'none', boxSizing: 'border-box',
+                    transition: 'border-color 0.12s',
+                    fontFamily: 'inherit',
                   }}
+                  onFocus={e => (e.target.style.borderColor = '#1d4ed8')}
+                  onBlur={e => (e.target.style.borderColor = '#e5e7eb')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   style={{
-                    position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)',
-                    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                    position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: '#9ca3af',
                   }}
                 >
-                  {showPassword ? <EyeOff size={15} color="var(--text-secondary)" /> : <Eye size={15} color="var(--text-secondary)" />}
+                  {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
               </div>
             </div>
 
-            {/* Remember Me & Forgot Password */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  style={{ borderRadius: '4px', accentColor: 'var(--primary)', cursor: 'pointer' }}
-                />
-                Remember me
-              </label>
-              <a href="#" onClick={(e) => { e.preventDefault(); alert('Use the 1-Click Quick Access button above to sign in as HR Admin.'); }} style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
-                Forgot Password?
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <a
+                href="#"
+                onClick={e => { e.preventDefault(); alert('Use the quick access button above.'); }}
+                style={{ fontSize: '12px', color: '#1d4ed8', textDecoration: 'none', fontWeight: 500 }}
+              >
+                Forgot password?
               </a>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                width: '100%',
-                padding: '11px',
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-                border: 'none',
-                color: 'white',
-                fontSize: '13px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
-                transition: 'all 0.2s ease',
-                marginTop: '4px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                width: '100%', padding: '10px',
+                borderRadius: 7, border: 'none',
+                background: '#1d4ed8', color: 'white',
+                fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                transition: 'background 0.12s',
+                opacity: isLoading ? 0.8 : 1,
               }}
+              onMouseEnter={e => { if (!isLoading) e.currentTarget.style.background = '#1e40af'; }}
+              onMouseLeave={e => { if (!isLoading) e.currentTarget.style.background = '#1d4ed8'; }}
             >
-              {isLoading ? (
-                <>⏳ Signing in to Payroll AI...</>
-              ) : (
-                <>
-                  Sign In to Dashboard
-                  <ArrowRight size={15} />
-                </>
-              )}
+              {isLoading ? 'Signing in…' : <>Sign in <ArrowRight size={13} /></>}
             </button>
           </form>
 
-          {/* Footer Note */}
-          <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)' }}>
-            Enterprise SSL Encryption • Payroll AI © 2026
+          <div style={{ marginTop: 20, textAlign: 'center', fontSize: '11px', color: '#9ca3af' }}>
+            Enterprise SSL · PayrollAI © 2026
           </div>
         </div>
       </div>

@@ -18,43 +18,56 @@ export function AppShell({ children }: AppShellProps) {
 
   const handleUploadSuccess = () => {
     setUploadModalOpen(false);
-    // Reload page to refresh all active page data with newly uploaded file records
     window.location.reload();
   };
 
   if (pathname === '/login') {
-    return <main style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>{children}</main>;
+    return (
+      <main style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+        {children}
+      </main>
+    );
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--content-bg)' }}>
-      {/* Hover-Driven Sidebar */}
+    <div
+      style={{
+        display: 'flex',
+        height: '100vh',
+        overflow: 'hidden',
+        background: 'var(--content-bg)',
+      }}
+    >
       <Sidebar />
 
-      {/* Main content */}
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        minWidth: 0,
-        transition: 'all 0.25s ease',
-        marginRight: aiPanelOpen ? '420px' : '0',
-      }}>
+      {/* Main content area */}
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          minWidth: 0,
+          transition: 'margin-right 0.22s ease',
+          marginRight: aiPanelOpen ? '420px' : '0',
+        }}
+      >
         <Header
           onAIToggle={() => setAiPanelOpen(!aiPanelOpen)}
           aiOpen={aiPanelOpen}
           onUploadClick={() => setUploadModalOpen(true)}
         />
-        <main style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '24px',
-        }}>
+        <main
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '20px 24px',
+          }}
+        >
           {children}
         </main>
       </div>
 
-      {/* AI Panel */}
+      {/* AI Side Panel */}
       <AIPanel open={aiPanelOpen} onClose={() => setAiPanelOpen(false)} />
 
       {/* Global Upload Modal */}
@@ -67,4 +80,3 @@ export function AppShell({ children }: AppShellProps) {
     </div>
   );
 }
-

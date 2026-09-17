@@ -1,5 +1,5 @@
-'use client';
 // src/app/settings/page.tsx
+'use client';
 import { useState, useEffect } from 'react';
 import { CheckCircle, Building2, FileText } from 'lucide-react';
 
@@ -15,21 +15,18 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
   const [advSaved, setAdvSaved] = useState(false);
 
-  // Company fields (static for now)
   const companyFields = [
-    { label: 'Company Name',  value: 'Payroll AI' },
-    { label: 'Address',       value: 'Plot No. 45, Tech Park Phase 2, Industrial Zone' },
-    { label: 'City',          value: 'Mumbai' },
-    { label: 'State',         value: 'Maharashtra' },
-    { label: 'Pincode',       value: '400001' },
+    { label: 'Company Name', value: 'Payroll AI' },
+    { label: 'Address',      value: 'Plot No. 45, Tech Park Phase 2, Industrial Zone' },
+    { label: 'City',         value: 'Mumbai' },
+    { label: 'State',        value: 'Maharashtra' },
+    { label: 'Pincode',      value: '400001' },
   ];
 
-  // Register of Advances header fields (localStorage-backed)
   const [contractor,   setContractor]   = useState(DEFAULT_CONTRACTOR);
   const [workLocation, setWorkLocation] = useState(DEFAULT_WORK_LOCATION);
   const [principalEmp, setPrincipalEmp] = useState(DEFAULT_PRINCIPAL_EMP);
 
-  // Load from localStorage on mount
   useEffect(() => {
     const c = localStorage.getItem(LS_CONTRACTOR);
     const w = localStorage.getItem(LS_WORK_LOCATION);
@@ -49,15 +46,16 @@ export default function SettingsPage() {
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    padding: '9px 12px',
+    padding: '8px 11px',
     border: '1px solid var(--border)',
-    borderRadius: '8px',
+    borderRadius: 'var(--radius-sm)',
     fontSize: '13px',
     color: 'var(--text-primary)',
     outline: 'none',
     background: 'white',
-    transition: 'border-color 0.15s',
+    transition: 'border-color 0.12s',
     boxSizing: 'border-box',
+    fontFamily: 'inherit',
   };
 
   const labelStyle: React.CSSProperties = {
@@ -65,151 +63,183 @@ export default function SettingsPage() {
     fontWeight: 600,
     color: 'var(--text-secondary)',
     display: 'block',
-    marginBottom: '5px',
-  };
-
-  const sectionHeadStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    fontSize: '14px',
-    fontWeight: 700,
-    color: 'var(--text-primary)',
-    marginBottom: '18px',
-    paddingBottom: '12px',
-    borderBottom: '1px solid var(--card-border)',
+    marginBottom: 5,
   };
 
   return (
-    <div style={{ maxWidth: '680px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ maxWidth: 640, display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-      {/* ── Company Settings (existing) ── */}
-      <div style={{
-        background: 'var(--card-bg)', border: '1px solid var(--card-border)',
-        borderRadius: 'var(--radius)', padding: '24px',
-      }}>
-        <div style={sectionHeadStyle}>
-          <div style={{ width: 30, height: 30, borderRadius: 8, background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Building2 size={15} color="#2563eb" />
-          </div>
-          Company Settings
+      {/* Company settings */}
+      <div
+        style={{
+          background: 'var(--card-bg)',
+          border: '1px solid var(--card-border)',
+          borderRadius: 'var(--radius)',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Section header */}
+        <div
+          style={{
+            padding: '12px 20px',
+            borderBottom: '1px solid var(--card-border)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <Building2 size={14} color="var(--text-secondary)" />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+            Company settings
+          </span>
         </div>
 
-        {companyFields.map(f => (
-          <div key={f.label} style={{ marginBottom: '14px' }}>
-            <label style={labelStyle}>{f.label}</label>
-            <input
-              defaultValue={f.value}
-              style={inputStyle}
-              onFocus={e => (e.target.style.borderColor = '#2563eb')}
-              onBlur={e  => (e.target.style.borderColor = 'var(--border)')}
-            />
-          </div>
-        ))}
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '4px' }}>
-          <button
-            onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 2500); }}
+        <div style={{ padding: '20px' }}>
+          <div
             style={{
-              padding: '9px 20px', borderRadius: '8px', border: 'none',
-              background: '#2563eb', color: 'white', fontSize: '13px',
-              fontWeight: 600, cursor: 'pointer',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 14,
+              marginBottom: 20,
             }}
           >
-            Save Changes
-          </button>
-          {saved && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', color: '#059669', fontWeight: 600 }}>
-              <CheckCircle size={14} /> Saved successfully
-            </span>
-          )}
+            {companyFields.map(f => (
+              <div key={f.label} style={f.label === 'Address' ? { gridColumn: '1 / -1' } : {}}>
+                <label style={labelStyle}>{f.label}</label>
+                <input
+                  defaultValue={f.value}
+                  style={inputStyle}
+                  onFocus={e => (e.target.style.borderColor = 'var(--primary)')}
+                  onBlur={e => (e.target.style.borderColor = 'var(--border)')}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button
+              onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 2500); }}
+              style={{
+                padding: '8px 18px', borderRadius: 'var(--radius-sm)', border: 'none',
+                background: 'var(--primary)', color: 'white',
+                fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--primary-hover)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'var(--primary)')}
+            >
+              Save changes
+            </button>
+            {saved && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '12px', color: 'var(--success)', fontWeight: 500 }}>
+                <CheckCircle size={13} /> Saved
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* ── Register of Advances Header ── */}
-      <div style={{
-        background: 'var(--card-bg)', border: '1px solid var(--card-border)',
-        borderRadius: 'var(--radius)', padding: '24px',
-      }}>
-        <div style={sectionHeadStyle}>
-          <div style={{ width: 30, height: 30, borderRadius: 8, background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <FileText size={15} color="#059669" />
-          </div>
-          Register of Advances — Form XXII Header
-        </div>
-
-        <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '18px', marginTop: '-8px' }}>
-          These details appear in the header of the official Form XXII (Register of Advances) PDF.
-          They are saved locally in your browser.
-        </p>
-
-        <div style={{ marginBottom: '14px' }}>
-          <label style={labelStyle}>Name and Address of Contractor</label>
-          <textarea
-            value={contractor}
-            onChange={e => setContractor(e.target.value)}
-            rows={2}
-            style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }}
-            onFocus={e => (e.target.style.borderColor = '#059669')}
-            onBlur={e  => (e.target.style.borderColor = 'var(--border)')}
-          />
-        </div>
-
-        <div style={{ marginBottom: '14px' }}>
-          <label style={labelStyle}>Nature and Location of Work</label>
-          <textarea
-            value={workLocation}
-            onChange={e => setWorkLocation(e.target.value)}
-            rows={2}
-            style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }}
-            onFocus={e => (e.target.style.borderColor = '#059669')}
-            onBlur={e  => (e.target.style.borderColor = 'var(--border)')}
-          />
-        </div>
-
-        <div style={{ marginBottom: '18px' }}>
-          <label style={labelStyle}>Name and Address of Principal Employer</label>
-          <textarea
-            value={principalEmp}
-            onChange={e => setPrincipalEmp(e.target.value)}
-            rows={2}
-            style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }}
-            onFocus={e => (e.target.style.borderColor = '#059669')}
-            onBlur={e  => (e.target.style.borderColor = 'var(--border)')}
-          />
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button
-            onClick={saveAdvanceSettings}
-            style={{
-              padding: '9px 20px', borderRadius: '8px', border: 'none',
-              background: '#059669', color: 'white', fontSize: '13px',
-              fontWeight: 600, cursor: 'pointer',
-            }}
-          >
-            Save Register Settings
-          </button>
-          <button
-            onClick={() => {
-              setContractor(DEFAULT_CONTRACTOR);
-              setWorkLocation(DEFAULT_WORK_LOCATION);
-              setPrincipalEmp(DEFAULT_PRINCIPAL_EMP);
-            }}
-            style={{
-              padding: '9px 16px', borderRadius: '8px',
-              border: '1px solid var(--border)', background: 'white',
-              color: 'var(--text-secondary)', fontSize: '13px',
-              fontWeight: 500, cursor: 'pointer',
-            }}
-          >
-            Reset to Default
-          </button>
-          {advSaved && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', color: '#059669', fontWeight: 600 }}>
-              <CheckCircle size={14} /> Saved successfully
+      {/* Register of Advances header */}
+      <div
+        style={{
+          background: 'var(--card-bg)',
+          border: '1px solid var(--card-border)',
+          borderRadius: 'var(--radius)',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            padding: '12px 20px',
+            borderBottom: '1px solid var(--card-border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <FileText size={14} color="var(--text-secondary)" />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+              Form XXII — Register of Advances header
             </span>
-          )}
+          </div>
+        </div>
+
+        <div style={{ padding: '20px' }}>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: 16 }}>
+            These details appear in the header of the official Form XXII PDF. Values are saved locally in your browser.
+          </p>
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={labelStyle}>Name and address of contractor</label>
+            <textarea
+              value={contractor}
+              onChange={e => setContractor(e.target.value)}
+              rows={2}
+              style={{ ...inputStyle, resize: 'vertical' }}
+              onFocus={e => (e.target.style.borderColor = 'var(--primary)')}
+              onBlur={e => (e.target.style.borderColor = 'var(--border)')}
+            />
+          </div>
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={labelStyle}>Nature and location of work</label>
+            <textarea
+              value={workLocation}
+              onChange={e => setWorkLocation(e.target.value)}
+              rows={2}
+              style={{ ...inputStyle, resize: 'vertical' }}
+              onFocus={e => (e.target.style.borderColor = 'var(--primary)')}
+              onBlur={e => (e.target.style.borderColor = 'var(--border)')}
+            />
+          </div>
+
+          <div style={{ marginBottom: 20 }}>
+            <label style={labelStyle}>Name and address of principal employer</label>
+            <textarea
+              value={principalEmp}
+              onChange={e => setPrincipalEmp(e.target.value)}
+              rows={2}
+              style={{ ...inputStyle, resize: 'vertical' }}
+              onFocus={e => (e.target.style.borderColor = 'var(--primary)')}
+              onBlur={e => (e.target.style.borderColor = 'var(--border)')}
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <button
+              onClick={saveAdvanceSettings}
+              style={{
+                padding: '8px 18px', borderRadius: 'var(--radius-sm)', border: 'none',
+                background: 'var(--primary)', color: 'white',
+                fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'var(--primary-hover)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'var(--primary)')}
+            >
+              Save settings
+            </button>
+            <button
+              onClick={() => {
+                setContractor(DEFAULT_CONTRACTOR);
+                setWorkLocation(DEFAULT_WORK_LOCATION);
+                setPrincipalEmp(DEFAULT_PRINCIPAL_EMP);
+              }}
+              style={{
+                padding: '8px 14px', borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border)', background: 'white',
+                color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500, cursor: 'pointer',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#f9fafb')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'white')}
+            >
+              Reset to default
+            </button>
+            {advSaved && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: '12px', color: 'var(--success)', fontWeight: 500 }}>
+                <CheckCircle size={13} /> Saved
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

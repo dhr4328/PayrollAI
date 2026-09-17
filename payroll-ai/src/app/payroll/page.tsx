@@ -1,14 +1,14 @@
 'use client';
 // src/app/payroll/page.tsx
 import { useMemo, useState, useEffect } from 'react';
-import { Play, Download, Mail, CheckCircle, Clock, DollarSign, TrendingUp, Users } from 'lucide-react';
-import { employees as mockEmployees } from '@/lib/data/employees';
-import { attendanceData as mockAttendanceData } from '@/lib/data/attendance';
+import {
+  Play, Download, Mail, CheckCircle, Loader2,
+  DollarSign, TrendingUp, Users, ShieldCheck, AlertCircle
+} from 'lucide-react';
 import { calculateBulkPayroll, getPayrollSummary } from '@/lib/payroll/calculator';
 import { formatCurrency, initials } from '@/lib/utils';
 import { PayrollEntry, AttendanceRecord } from '@/types/payroll';
 import { Employee } from '@/types/employee';
-
 import EmptyDataPrompt from '@/components/EmptyDataPrompt';
 import UploadModal from '@/components/UploadModal';
 
@@ -25,7 +25,6 @@ export default function PayrollPage() {
       .then(res => res.json())
       .then(data => {
         setIsLoaded(true);
-
         if (Array.isArray(data)) {
           const mappedEmps = data.map((e: any) => ({
             id: e.id || 0,
@@ -46,7 +45,7 @@ export default function PayrollPage() {
             salaryType: e.salary_type,
             perDayRate: e.per_day_rate,
             fixedPay: e.fixed_pay,
-            paymentMode: e.remarks || 'BANK'
+            paymentMode: e.remarks || 'BANK',
           }));
           setEmployeesList(mappedEmps);
 
@@ -62,12 +61,12 @@ export default function PayrollPage() {
             weeklyOff: e.weekly_off || 0,
             perPiece: e.per_piece || 0,
             paidDays: e.paid_days || 0,
-            totalDays: e.total_days || 28
+            totalDays: e.total_days || 28,
           }));
           setAttendanceList(mappedAtt);
         }
       })
-      .catch(err => console.error("Error fetching employees in payroll:", err));
+      .catch(err => { console.error('Payroll fetch error:', err); setIsLoaded(true); });
   }, []);
 
   const attMap = useMemo(() => {
@@ -101,26 +100,84 @@ export default function PayrollPage() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-      {/* Header card */}
-      <div style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
-        borderRadius: 'var(--radius-lg)', padding: '24px',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      }}>
+      {/* Clean white page header — replaced dark gradient */}
+      <div
+        style={{
+          background: 'var(--card-bg)',
+          border: '1px solid var(--card-border)',
+          borderRadius: 'var(--radius)',
+          padding: '16px 20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <div>
-          <h2 style={{ color: 'white', fontSize: '18px', fontWeight: 700, marginBottom: '4px' }}>November 2025 Payroll</h2>
-          <p style={{ color: '#94a3b8', fontSize: '13px' }}>{employeesList.length} employees • UNIT-2 • Payroll AI</p>
-          {status === 'done' && <p style={{ color: '#4ade80', fontSize: '12px', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={12} /> Payroll processed successfully</p>}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <h2 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>
+              November 2025
+            </h2>
+            <span
+              style={{
+                padding: '2px 8px',
+                borderRadius: 20,
+                fontSize: '11px',
+                fontWeight: 600,
+                background: status === 'done'
+                  ? 'var(--success-light)'
+                  : status === 'processing'
+                  ? 'var(--info-light)'
+                  : '#f3f4f6',
+                color: status === 'done'
+                  ? 'var(--success)'
+                  : status === 'processing'
+                  ? 'var(--info)'
+                  : 'var(--text-secondary)',
+                border: `1px solid ${status === 'done' ? 'var(--success-border)' : status === 'processing' ? 'var(--info-border)' : 'var(--border)'}`,
+              }}
+            >
+              {status === 'done' ? 'Processed' : status === 'processing' ? 'Processing…' : 'Draft'}
+            </span>
+          </div>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: 3 }}>
+            {employeesList.length} employees · UNIT-2 · Payroll AI
+            {status === 'done' && (
+              <span style={{ color: 'var(--success)', marginLeft: 10, fontWeight: 500 }}>
+                · Calculation complete
+              </span>
+            )}
+          </p>
         </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
+
+        <div style={{ display: 'flex', gap: 8 }}>
           {status === 'done' && (
             <>
-              <button style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.08)', color: 'white', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}>
+              <button
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '7px 14px', borderRadius: 6,
+                  border: '1px solid var(--border)', background: 'white',
+                  color: 'var(--text-secondary)', fontSize: '12px',
+                  fontWeight: 500, cursor: 'pointer',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#f9fafb')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'white')}
+              >
                 <Mail size={13} /> Email All
               </button>
-              <button style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.08)', color: 'white', fontSize: '12px', cursor: 'pointer', fontWeight: 500 }}>
+              <button
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '7px 14px', borderRadius: 6,
+                  border: '1px solid var(--border)', background: 'white',
+                  color: 'var(--text-secondary)', fontSize: '12px',
+                  fontWeight: 500, cursor: 'pointer',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#f9fafb')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'white')}
+              >
                 <Download size={13} /> Export CSV
               </button>
             </>
@@ -129,108 +186,267 @@ export default function PayrollPage() {
             onClick={runPayroll}
             disabled={status === 'processing'}
             style={{
-              display: 'flex', alignItems: 'center', gap: '7px', padding: '9px 20px',
-              borderRadius: '8px', border: 'none',
-              background: status === 'done' ? '#059669' : '#2563eb',
-              color: 'white', fontSize: '13px', fontWeight: 600, cursor: status === 'processing' ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s',
-            }}>
+              display: 'flex', alignItems: 'center', gap: 7,
+              padding: '7px 18px', borderRadius: 6, border: 'none',
+              background: status === 'done' ? 'var(--success)' : 'var(--primary)',
+              color: 'white', fontSize: '12px', fontWeight: 600,
+              cursor: status === 'processing' ? 'not-allowed' : 'pointer',
+              transition: 'background 0.15s',
+              opacity: status === 'processing' ? 0.8 : 1,
+            }}
+          >
             {status === 'processing' ? (
-              <><Clock size={14} style={{ animation: 'spin 1s linear infinite' }} /> Processing...</>
+              <><Loader2 size={13} className="spin" /> Processing…</>
             ) : status === 'done' ? (
-              <><CheckCircle size={14} /> Rerun Payroll</>
+              <><CheckCircle size={13} /> Rerun Payroll</>
             ) : (
-              <><Play size={14} /> Run Payroll</>
+              <><Play size={13} /> Run Payroll</>
             )}
           </button>
         </div>
       </div>
 
-      {/* Summary cards */}
+      {/* KPI summary cards */}
       {summary && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
           {[
-            { label: 'Employees Processed', value: summary.count, icon: Users, color: '#2563eb', bg: '#eff6ff' },
-            { label: 'Total Gross', value: formatCurrency(summary.totalGross), icon: TrendingUp, color: '#059669', bg: '#f0fdf4' },
-            { label: 'Total Net Pay', value: formatCurrency(summary.totalNet), icon: DollarSign, color: '#4f46e5', bg: '#eef2ff' },
-            { label: 'PF + ESI (ER)', value: formatCurrency(summary.totalPF + summary.totalESI), icon: CheckCircle, color: '#0891b2', bg: '#f0f9ff' },
+            { label: 'Employees Processed', value: String(summary.count), icon: Users },
+            { label: 'Total Gross', value: formatCurrency(summary.totalGross), icon: TrendingUp },
+            { label: 'Total Net Pay', value: formatCurrency(summary.totalNet), icon: DollarSign },
+            { label: 'Statutory (PF + ESI)', value: formatCurrency(summary.totalPF + summary.totalESI), icon: ShieldCheck },
           ].map(card => (
-            <div key={card.label} style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 'var(--radius)', padding: '14px 16px', boxShadow: 'var(--shadow-sm)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: card.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <card.icon size={15} color={card.color} />
-                </div>
-                <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{card.label}</span>
+            <div
+              key={card.label}
+              style={{
+                background: 'var(--card-bg)',
+                border: '1px solid var(--card-border)',
+                borderRadius: 'var(--radius)',
+                padding: '14px 16px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                <card.icon size={13} color="var(--text-muted)" />
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
+                  {card.label}
+                </span>
               </div>
-              <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>{card.value}</div>
+              <div
+                style={{
+                  fontSize: '17px',
+                  fontWeight: 700,
+                  color: 'var(--text-primary)',
+                  fontVariantNumeric: 'tabular-nums',
+                }}
+              >
+                {card.value}
+              </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Payroll table */}
-      {status !== 'idle' && (
-        <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: 'var(--radius)', boxShadow: 'var(--shadow-sm)', overflow: 'hidden' }}>
-          <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--card-border)' }}>
-            <h3 style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
-              {status === 'processing' ? '⟳ Processing payroll...' : `Payroll Details — ${entries.length} employees`}
-            </h3>
+      {/* Idle state — professional empty state */}
+      {status === 'idle' && (
+        <div
+          style={{
+            background: 'var(--card-bg)',
+            border: '1px solid var(--card-border)',
+            borderRadius: 'var(--radius)',
+            padding: '48px 32px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
+          <div
+            style={{
+              width: 40, height: 40, borderRadius: 10,
+              background: '#f3f4f6',
+              border: '1px solid var(--border)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              marginBottom: 4,
+            }}
+          >
+            <Play size={18} color="var(--text-muted)" />
           </div>
-          {status === 'done' && (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr style={{ background: '#f8fafc' }}>
-                    {['Employee', 'Paid Days', 'Base Salary', 'Extra Pay', 'Total Earning', 'EE PF', 'ESI', 'PT', 'Deductions', 'Net Pay', 'Status'].map((h, idx) => (
-                      <th key={h} style={{ padding: '10px 12px', textAlign: idx === 0 ? 'left' : 'right', fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {entries.map(entry => {
-                    const emp = employeesList.find(e => e.empCode === entry.empCode);
-                    const att = attMap[entry.empCode];
-                    return (
-                      <tr key={entry.empCode} style={{ borderBottom: '1px solid var(--card-border)' }}
-                        onMouseEnter={e => (e.currentTarget.style.background = '#f8fafc')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                        <td style={{ padding: '10px 12px', minWidth: '160px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ width: '28px', height: '28px', borderRadius: '7px', background: `hsl(${(emp?.id ?? 0) * 43 % 360}, 60%, 92%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 700, color: `hsl(${(emp?.id ?? 0) * 43 % 360}, 50%, 35%)`, flexShrink: 0 }}>
-                              {initials(emp?.name ?? '')}
-                            </div>
-                            <div>
-                              <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>{emp?.name}</div>
-                              <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{entry.empCode}</div>
-                            </div>
-                          </div>
-                        </td>
-                        {[att?.paidDays ?? 0, entry.salary, entry.extraPay + entry.binCardAmount, entry.totalEarning, entry.eePf, entry.esiEe, entry.pt, entry.otherDeduction + entry.mediclaimDeduction + entry.shoesUniform].map((v, i) => (
-                          <td key={i} style={{ padding: '10px 12px', textAlign: 'right', fontSize: '12px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
-                            {i === 0 ? v : `₹${Number(v).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
-                          </td>
-                        ))}
-                        <td style={{ padding: '10px 12px', textAlign: 'right', fontSize: '12px', fontWeight: 700, color: entry.netPay >= 0 ? '#059669' : '#dc2626', whiteSpace: 'nowrap' }}>
-                          {formatCurrency(entry.netPay)}
-                        </td>
-                        <td style={{ padding: '10px 12px', textAlign: 'right' }}>
-                          <span style={{ padding: '2px 8px', borderRadius: '20px', fontSize: '10px', fontWeight: 600, background: '#f0fdf4', color: '#059669' }}>Processed</span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
+          <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
+            No payroll has been run yet
+          </div>
+          <div style={{ fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center', maxWidth: 360 }}>
+            Click <strong>Run Payroll</strong> above to calculate salaries for all {employeesList.length} employees based on attendance and rate data.
+          </div>
         </div>
       )}
 
-      {status === 'idle' && (
-        <div style={{ background: 'var(--card-bg)', border: '1px dashed var(--border)', borderRadius: 'var(--radius)', padding: '48px', textAlign: 'center' }}>
-          <Play size={32} color="#cbd5e1" style={{ marginBottom: '12px' }} />
-          <h3 style={{ color: 'var(--text-primary)', fontWeight: 600, marginBottom: '4px' }}>Ready to process payroll</h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Click &ldquo;Run Payroll&rdquo; to calculate salaries for all {employeesList.length} employees</p>
+      {/* Processing skeleton */}
+      {status === 'processing' && (
+        <div
+          style={{
+            background: 'var(--card-bg)',
+            border: '1px solid var(--card-border)',
+            borderRadius: 'var(--radius)',
+            overflow: 'hidden',
+          }}
+        >
+          <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--card-border)', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Loader2 size={14} color="var(--primary)" className="spin" />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+              Calculating payroll…
+            </span>
+          </div>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} style={{ padding: '10px 16px', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: 12 }}>
+              <div className="shimmer" style={{ width: 28, height: 28, borderRadius: 7 }} />
+              <div className="shimmer" style={{ flex: 1, height: 14, borderRadius: 4 }} />
+              <div className="shimmer" style={{ width: 80, height: 14, borderRadius: 4 }} />
+              <div className="shimmer" style={{ width: 80, height: 14, borderRadius: 4 }} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Payroll results table */}
+      {status === 'done' && entries.length > 0 && (
+        <div
+          style={{
+            background: 'var(--card-bg)',
+            border: '1px solid var(--card-border)',
+            borderRadius: 'var(--radius)',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              padding: '12px 16px',
+              borderBottom: '1px solid var(--card-border)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+              Payroll details — {entries.length} employees
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <CheckCircle size={13} color="var(--success)" />
+              <span style={{ fontSize: '12px', color: 'var(--success)', fontWeight: 500 }}>
+                All records processed
+              </span>
+            </div>
+          </div>
+
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ background: '#f9fafb', borderBottom: '1px solid var(--card-border)' }}>
+                  {['Employee', 'Paid Days', 'Base Pay', 'Extra Pay', 'Gross', 'PF (EE)', 'ESI', 'PT', 'Other Ded.', 'Net Pay', 'Status'].map((h, idx) => (
+                    <th
+                      key={h}
+                      style={{
+                        padding: '9px 12px',
+                        textAlign: idx === 0 ? 'left' : 'right',
+                        fontSize: '10px',
+                        fontWeight: 600,
+                        color: 'var(--text-muted)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {entries.map(entry => {
+                  const emp = employeesList.find(e => e.empCode === entry.empCode);
+                  const att = attMap[entry.empCode];
+                  const avatarHue = ((emp?.id ?? 0) * 43) % 360;
+                  return (
+                    <tr
+                      key={entry.empCode}
+                      style={{ borderBottom: '1px solid var(--card-border)' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#f9fafb')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <td style={{ padding: '9px 12px', minWidth: 160 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div
+                            style={{
+                              width: 26, height: 26, borderRadius: 6, flexShrink: 0,
+                              background: `hsl(${avatarHue}, 45%, 93%)`,
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: '9px', fontWeight: 700,
+                              color: `hsl(${avatarHue}, 40%, 35%)`,
+                            }}
+                          >
+                            {initials(emp?.name ?? '')}
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                              {emp?.name}
+                            </div>
+                            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                              {entry.empCode}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      {[
+                        att?.paidDays ?? 0,
+                        entry.salary,
+                        entry.extraPay + entry.binCardAmount,
+                        entry.totalEarning,
+                        entry.eePf,
+                        entry.esiEe,
+                        entry.pt,
+                        entry.otherDeduction + entry.mediclaimDeduction + entry.shoesUniform,
+                      ].map((v, i) => (
+                        <td
+                          key={i}
+                          style={{
+                            padding: '9px 12px', textAlign: 'right',
+                            fontSize: '12px', color: 'var(--text-secondary)',
+                            whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums',
+                          }}
+                        >
+                          {i === 0
+                            ? v
+                            : `₹${Number(v).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`
+                          }
+                        </td>
+                      ))}
+                      <td
+                        style={{
+                          padding: '9px 12px', textAlign: 'right',
+                          fontSize: '12px', fontWeight: 700,
+                          color: entry.netPay >= 0 ? 'var(--success)' : 'var(--danger)',
+                          whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums',
+                        }}
+                      >
+                        {formatCurrency(entry.netPay)}
+                      </td>
+                      <td style={{ padding: '9px 12px', textAlign: 'right' }}>
+                        <span
+                          style={{
+                            padding: '2px 8px', borderRadius: 20,
+                            fontSize: '10px', fontWeight: 600,
+                            background: 'var(--success-light)',
+                            color: 'var(--success)',
+                            border: '1px solid var(--success-border)',
+                          }}
+                        >
+                          Processed
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
