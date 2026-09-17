@@ -71,18 +71,180 @@ def init_db():
         FOREIGN KEY (emp_code) REFERENCES employees (emp_code)
     )
     """)
-    
+
+    # ── NEW: Conversation management ─────────────────────────────────
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS conversations (
+        id TEXT PRIMARY KEY,
+        session_id TEXT NOT NULL,
+        title TEXT NOT NULL DEFAULT 'New Conversation',
+        summary TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        last_message_at DATETIME,
+        message_count INTEGER DEFAULT 0,
+        is_archived INTEGER DEFAULT 0,
+        metadata_json TEXT DEFAULT '{}'
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS chat_messages (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL,
+        session_id TEXT NOT NULL,
+        role TEXT NOT NULL,
+        content TEXT NOT NULL,
+        message_type TEXT DEFAULT 'text',
+        tool_name TEXT,
+        tool_call_id TEXT,
+        parent_message_id TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        token_count INTEGER DEFAULT 0,
+        metadata_json TEXT DEFAULT '{}',
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
+    )
+    """)
+
+    # ── NEW: Document knowledge base ──────────────────────────────────
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS documents (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        file_type TEXT NOT NULL,
+        file_size INTEGER DEFAULT 0,
+        checksum TEXT NOT NULL,
+        status TEXT DEFAULT 'queued',
+        version INTEGER DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        metadata_json TEXT DEFAULT '{}'
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS document_chunks (
+        id TEXT PRIMARY KEY,
+        document_id TEXT NOT NULL,
+        chunk_index INTEGER NOT NULL,
+        content TEXT NOT NULL,
+        page_number INTEGER DEFAULT 0,
+        section TEXT,
+        token_count INTEGER DEFAULT 0,
+        embedding_blob TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        metadata_json TEXT DEFAULT '{}',
+        FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE
+    )
+    """)
+
+    # ── NEW: Conversation memories ────────────────────────────────────
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS conversation_memories (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL,
+        content TEXT NOT NULL,
+        embedding_blob TEXT,
+        importance_score REAL DEFAULT 0.5,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        last_accessed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        source_message_id TEXT,
+        metadata_json TEXT DEFAULT '{}',
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
+    )
+    """)
+
+    # ── NEW: AI tool execution log ────────────────────────────────────
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS ai_tool_executions (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT,
+        message_id TEXT,
+        tool_name TEXT NOT NULL,
+        tool_category TEXT DEFAULT 'read',
+        arguments_json TEXT DEFAULT '{}',
+        result_json TEXT,
+        status TEXT DEFAULT 'pending',
+        execution_time_ms INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        error TEXT
+    )
+    """)
+
+    # ── NEW: AI response feedback ─────────────────────────────────────
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS ai_feedback (
+        id TEXT PRIMARY KEY,
+        message_id TEXT NOT NULL,
+        conversation_id TEXT,
+        rating INTEGER NOT NULL,
+        reason TEXT,
+        comment TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # ── NEW: Message citation sources ─────────────────────────────────
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS message_sources (
+        id TEXT PRIMARY KEY,
+        message_id TEXT NOT NULL,
+        source_type TEXT DEFAULT 'document',
+        document_id TEXT,
+        chunk_id TEXT,
+        page_number INTEGER DEFAULT 0,
+        relevance_score REAL DEFAULT 0.0,
+        citation_index INTEGER DEFAULT 1,
+        excerpt TEXT,
+        metadata_json TEXT DEFAULT '{}'
+    )
+    """)
+
+    # ── NEW: Embedding cache ───────────────────────────────────────────
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS embedding_cache (
+        cache_key TEXT PRIMARY KEY,
+        embedding_blob TEXT NOT NULL,
+        model_name TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # ── Indexes ────────────────────────────────────────────────────────
+
+    for idx_sql in [
+        "CREATE INDEX IF NOT EXISTS idx_conversations_session ON conversations(session_id)",
+        "CREATE INDEX IF NOT EXISTS idx_conversations_updated ON conversations(updated_at DESC)",
+        "CREATE INDEX IF NOT EXISTS idx_conversations_archived ON conversations(is_archived)",
+        "CREATE INDEX IF NOT EXISTS idx_chat_messages_conv ON chat_messages(conversation_id)",
+        "CREATE INDEX IF NOT EXISTS idx_chat_messages_session ON chat_messages(session_id)",
+        "CREATE INDEX IF NOT EXISTS idx_chat_messages_created ON chat_messages(created_at)",
+        "CREATE INDEX IF NOT EXISTS idx_documents_checksum ON documents(checksum)",
+        "CREATE INDEX IF NOT EXISTS idx_doc_chunks_doc ON document_chunks(document_id)",
+        "CREATE INDEX IF NOT EXISTS idx_memories_conv ON conversation_memories(conversation_id)",
+        "CREATE INDEX IF NOT EXISTS idx_tool_exec_conv ON ai_tool_executions(conversation_id)",
+        "CREATE INDEX IF NOT EXISTS idx_feedback_message ON ai_feedback(message_id)",
+        "CREATE INDEX IF NOT EXISTS idx_sources_message ON message_sources(message_id)",
+    ]:
+        cursor.execute(idx_sql)
+
     conn.commit()
     conn.close()
     print("Database tables initialized successfully.")
-    
-    # Initialize Vector DB
+
+    # Initialize Vector DB (backward compat shim)
     try:
         import vector_db
         vector_db.init_vector_db()
     except Exception as e:
         print(f"Error initializing VectorDB: {e}")
-
 
 def clean_float(val):
     if val is None or val == "" or val == "-":

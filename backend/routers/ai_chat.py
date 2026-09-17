@@ -11,9 +11,10 @@ AI Chat endpoint with a warm, conversational, action-capable AI assistant person
 import os
 import re
 import json
+import uuid
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from openai import OpenAI
@@ -36,10 +37,19 @@ router = APIRouter()
 class ChatRequest(BaseModel):
     message: str
     session_id: Optional[str] = "default"
+    conversation_id: Optional[str] = None  # NEW: explicit conversation scoping
 
 
 class LogoutRequest(BaseModel):
     session_id: str
+
+
+class FeedbackRequest(BaseModel):
+    message_id: str
+    rating: int  # 1 = thumbs up, -1 = thumbs down
+    reason: Optional[str] = None
+    comment: Optional[str] = None
+    conversation_id: Optional[str] = None
 
 
 
@@ -912,33 +922,121 @@ def chat_endpoint(request: ChatRequest):
     message = request.message.strip()
     session_id = request.session_id or "default"
 
-    # Save user message to Vector DB
-    user_msg_id = f"msg-usr-{int(time.time()*1000)}"
-    vector_db.add_chat_message(session_id, user_msg_id, "user", message)
+    # ── Conversation tracking (new) ───────────────────────────────
+    conversation_id = request.conversation_id
+    try:
+        from services.conversation_service import (
+            get_or_create_conversation_for_session,
+            add_message as conv_add_message,
+            auto_title_conversation,
+            get_conversation,
+        )
+        from services.summarization_service import should_summarize, summarize_conversation
+        from services.memory_service import store_memory, retrieve_relevant_memories
 
-    # Perform vector similarity search for semantic context retrieval
+        if conversation_id:
+            conv = get_conversation(conversation_id)
+            if not conv:
+                conversation_id = None  # fallback
+        if not conversation_id:
+            conv = get_or_create_conversation_for_session(session_id)
+            conversation_id = conv["id"]
+
+        # Add user message to new conversation DB
+        user_msg_record = conv_add_message(
+            conversation_id, session_id, "user", message, message_type="text"
+        )
+        user_msg_id = user_msg_record["id"]
+
+        # Auto-title first message
+        if conv.get("message_count", 0) == 0 and conv.get("title") in ("New Conversation", "Chat Session", None):
+            auto_title_conversation(conversation_id, message)
+
+        # Retrieve relevant memories
+        memories = retrieve_relevant_memories(message, conversation_id, top_k=3)
+
+    except Exception as conv_err:
+        print(f"ConversationTracking: {conv_err}")
+        conversation_id = None
+        memories = []
+        user_msg_id = f"msg-usr-{int(time.time()*1000)}"
+
+    # ── Legacy vector DB (backward compat) ───────────────────────
+    vector_db.add_chat_message(session_id, user_msg_id, "user", message)
     relevant_history = vector_db.search_relevant_history(session_id, message, top_k=3)
+
+    # ── RAG retrieval ─────────────────────────────────────────────
+    rag_chunks = []
+    citations = []
+    try:
+        from ai.router import classify_intent, should_use_rag
+        intent, intent_meta = classify_intent(message)
+        if should_use_rag(intent):
+            from rag.retriever import retrieve_documents
+            rag_chunks = retrieve_documents(message, top_k=5)
+    except Exception as rag_err:
+        print(f"RAG: {rag_err}")
 
     # Determine response content
     rule_response = _rule_based_response(message)
-    
+
     def _generator():
+        nonlocal citations  # declare at top of generator
         final_response_text = ""
+        assistant_msg_id = f"msg-ast-{int(time.time()*1000)}"
+
+        # ── Typed event: thinking ─────────────────────────────────
+        if rag_chunks:
+            thinking_event = json.dumps({"event": "thinking", "data": "Searching knowledge base..."})
+            yield f"data: {thinking_event}\n\n"
+
         if rule_response is not None:
             final_response_text = rule_response
-            yield rule_response
+            # Emit citations if we have RAG hits
+            if rag_chunks:
+                try:
+                    from rag.citations import build_citations, format_citation_footer
+                    citations = build_citations(rag_chunks, assistant_msg_id)
+                    if citations:
+                        footer = format_citation_footer(citations)
+                        if footer:
+                            final_response_text = final_response_text + footer
+                        cit_event = json.dumps({"event": "citations", "data": citations})
+                        yield f"data: {cit_event}\n\n"
+                except Exception:
+                    pass
+            yield final_response_text
         else:
             client = get_nvidia_client()
             nvidia_resp = None
             if client:
                 try:
+                    # Emit tool_call event
+                    tc_event = json.dumps({"event": "tool_call", "data": {"tool": "nvidia_llm", "status": "running"}})
+                    yield f"data: {tc_event}\n\n"
                     nvidia_resp = _nvidia_chat(client, message)
+                    # Emit tool_result event
+                    tr_event = json.dumps({"event": "tool_result", "data": {"tool": "nvidia_llm", "status": "done"}})
+                    yield f"data: {tr_event}\n\n"
                 except Exception:
                     pass
-            
+
             if nvidia_resp:
                 final_response_text = nvidia_resp
-                yield nvidia_resp
+                # Append RAG citations to LLM response
+                if rag_chunks:
+                    try:
+                        from rag.citations import build_citations, format_citation_footer
+                        citations = build_citations(rag_chunks, assistant_msg_id)
+                        if citations:
+                            footer = format_citation_footer(citations)
+                            if footer:
+                                final_response_text = final_response_text + footer
+                            cit_event = json.dumps({"event": "citations", "data": citations})
+                            yield f"data: {cit_event}\n\n"
+                    except Exception:
+                        pass
+                yield final_response_text
             else:
                 db_count = database.get_record_count()
                 if db_count > 0:
@@ -966,16 +1064,59 @@ def chat_endpoint(request: ChatRequest):
                 final_response_text = fallback_text
                 yield fallback_text
 
-        # Save assistant message into Vector DB for current session
-        assistant_msg_id = f"msg-ast-{int(time.time()*1000)}"
+        # ── Save assistant message to legacy vector DB ─────────────
         vector_db.add_chat_message(session_id, assistant_msg_id, "assistant", final_response_text)
 
-    return StreamingResponse(_generator(), media_type="text/plain")
+        # ── Save to new conversation DB ───────────────────────────
+        if conversation_id:
+            try:
+                meta = {}
+                if citations:
+                    meta["citations"] = citations
+                conv_add_message(
+                    conversation_id, session_id, "assistant", final_response_text,
+                    message_type="text",
+                    metadata=meta,
+                )
+                # Store memory
+                store_memory(
+                    conversation_id,
+                    f"Q: {message[:200]} A: {final_response_text[:200]}",
+                    source_message_id=assistant_msg_id,
+                )
+
+                # Emit complete event with conversation info
+                conv_updated = get_conversation(conversation_id)
+                complete_event = json.dumps({
+                    "event": "complete",
+                    "data": {
+                        "message_id": assistant_msg_id,
+                        "conversation_id": conversation_id,
+                        "title": conv_updated.get("title") if conv_updated else None,
+                        "rag_used": len(rag_chunks) > 0,
+                        "citation_count": len(citations),
+                    }
+                })
+                yield f"data: {complete_event}\n\n"
+
+                # Trigger summarization if needed
+                if conv_updated and should_summarize(conv_updated.get("message_count", 0)):
+                    import threading
+                    threading.Thread(
+                        target=summarize_conversation,
+                        args=(conversation_id,),
+                        daemon=True,
+                    ).start()
+
+            except Exception as save_err:
+                print(f"ConversationSave: {save_err}")
+
+    return StreamingResponse(_generator(), media_type="text/event-stream")
 
 
 @router.get("/chat/history")
 def get_chat_history(session_id: str):
-    """Retrieve chat history and vector metadata for the given session_id."""
+    """Retrieve chat history for the given session_id (legacy endpoint)."""
     messages = vector_db.get_session_messages(session_id)
     return {"session_id": session_id, "messages": messages}
 
@@ -989,6 +1130,42 @@ def clear_chat_history(request: LogoutRequest):
         "status": "success",
         "message": f"Cleared chat history and vector embeddings for session '{request.session_id}'",
         "session_id": request.session_id,
-        "deleted_count": deleted_count
+        "deleted_count": deleted_count,
     }
+
+
+@router.post("/feedback")
+def submit_feedback(request: FeedbackRequest):
+    """Submit thumbs up/down feedback on an AI message."""
+    if request.rating not in (1, -1):
+        raise HTTPException(status_code=400, detail="Rating must be 1 (thumbs up) or -1 (thumbs down).")
+    try:
+        import sqlite3
+        db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "payroll.db")
+        conn = sqlite3.connect(db_path)
+        feedback_id = str(uuid.uuid4())
+        conn.execute(
+            """
+            INSERT INTO ai_feedback (id, message_id, conversation_id, rating, reason, comment)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (feedback_id, request.message_id, request.conversation_id,
+             request.rating, request.reason, request.comment),
+        )
+        conn.commit()
+        conn.close()
+        return {"status": "success", "feedback_id": feedback_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save feedback: {e}")
+
+
+@router.get("/memory/{conversation_id}")
+def get_conversation_memory_endpoint(conversation_id: str):
+    """Debug endpoint: retrieve stored memories for a conversation."""
+    try:
+        from services.memory_service import get_conversation_memories
+        memories = get_conversation_memories(conversation_id)
+        return {"conversation_id": conversation_id, "memories": memories, "count": len(memories)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
